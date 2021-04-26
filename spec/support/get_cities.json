@@ -1,0 +1,202 @@
+[
+    {
+        "id": 5200050,
+        "nome": "Abadia de Goiás",
+        "microrregiao": {
+            "id": 52010,
+            "nome": "Goiânia",
+            "mesorregiao": {
+                "id": 5203,
+                "nome": "Centro Goiano",
+                "UF": {
+                    "id": 52,
+                    "sigla": "GO",
+                    "nome": "Goiás",
+                    "regiao": {
+                        "id": 5,
+                        "sigla": "CO",
+                        "nome": "Centro-Oeste"
+                    }
+                }
+            }
+        },
+        "regiao-imediata": {
+            "id": 520001,
+            "nome": "Goiânia",
+            "regiao-intermediaria": {
+                "id": 5201,
+                "nome": "Goiânia",
+                "UF": {
+                    "id": 52,
+                    "sigla": "GO",
+                    "nome": "Goiás",
+                    "regiao": {
+                        "id": 5,
+                        "sigla": "CO",
+                        "nome": "Centro-Oeste"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "id": 3100104,
+        "nome": "Abadia dos Dourados",
+        "microrregiao": {
+            "id": 31019,
+            "nome": "Patrocínio",
+            "mesorregiao": {
+                "id": 3105,
+                "nome": "Triângulo Mineiro/Alto Paranaíba",
+                "UF": {
+                    "id": 31,
+                    "sigla": "MG",
+                    "nome": "Minas Gerais",
+                    "regiao": {
+                        "id": 3,
+                        "sigla": "SE",
+                        "nome": "Sudeste"
+                    }
+                }
+            }
+        },
+        "regiao-imediata": {
+            "id": 310061,
+            "nome": "Monte Carmelo",
+            "regiao-intermediaria": {
+                "id": 3111,
+                "nome": "Uberlândia",
+                "UF": {
+                    "id": 31,
+                    "sigla": "MG",
+                    "nome": "Minas Gerais",
+                    "regiao": {
+                        "id": 3,
+                        "sigla": "SE",
+                        "nome": "Sudeste"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "id": 5200100,
+        "nome": "Abadiânia",
+        "microrregiao": {
+            "id": 52012,
+            "nome": "Entorno de Brasília",
+            "mesorregiao": {
+                "id": 5204,
+                "nome": "Leste Goiano",
+                "UF": {
+                    "id": 52,
+                    "sigla": "GO",
+                    "nome": "Goiás",
+                    "regiao": {
+                        "id": 5,
+                        "sigla": "CO",
+                        "nome": "Centro-Oeste"
+                    }
+                }
+            }
+        },
+        "regiao-imediata": {
+            "id": 520002,
+            "nome": "Anápolis",
+            "regiao-intermediaria": {
+                "id": 5201,
+                "nome": "Goiânia",
+                "UF": {
+                    "id": 52,
+                    "sigla": "GO",
+                    "nome": "Goiás",
+                    "regiao": {
+                        "id": 5,
+                        "sigla": "CO",
+                        "nome": "Centro-Oeste"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "id": 3100203,
+        "nome": "Abaeté",
+        "microrregiao": {
+            "id": 31024,
+            "nome": "Três Marias",
+            "mesorregiao": {
+                "id": 3106,
+                "nome": "Central Mineira",
+                "UF": {
+                    "id": 31,
+                    "sigla": "MG",
+                    "nome": "Minas Gerais",
+                    "regiao": {
+                        "id": 3,
+                        "sigla": "SE",
+                        "nome": "Sudeste"
+                    }
+                }
+            }
+        },
+        "regiao-imediata": {
+            "id": 310070,
+            "nome": "Abaeté",
+            "regiao-intermediaria": {
+                "id": 3113,
+                "nome": "Divinópolis",
+                "UF": {
+                    "id": 31,
+                    "sigla": "MG",
+                    "nome": "Minas Gerais",
+                    "regiao": {
+                        "id": 3,
+                        "sigla": "SE",
+                        "nome": "Sudeste"
+                    }
+                }
+            }
+        }
+    },
+    {
+        "id": 1500107,
+        "nome": "Abaetetuba",
+        "microrregiao": {
+            "id": 15011,
+            "nome": "Cametá",
+            "mesorregiao": {
+                "id": 1504,
+                "nome": "Nordeste Paraense",
+                "UF": {
+                    "id": 15,
+                    "sigla": "PA",
+                    "nome": "Pará",
+                    "regiao": {
+                        "id": 1,
+                        "sigla": "N",
+                        "nome": "Norte"
+                    }
+                }
+            }
+        },
+        "regiao-imediata": {
+            "id": 150003,
+            "nome": "Abaetetuba",
+            "regiao-intermediaria": {
+                "id": 1501,
+                "nome": "Belém",
+                "UF": {
+                    "id": 15,
+                    "sigla": "PA",
+                    "nome": "Pará",
+                    "regiao": {
+                        "id": 1,
+                        "sigla": "N",
+                        "nome": "Norte"
+                    }
+                }
+            }
+        }
+    }
+]

@@ -7,3 +7,10 @@ gem "sinatra-activerecord"
 gem "sqlite3"
 gem "require_all"
 gem "rake"
+gem "factory_bot", "~> 6.1"
+
+gem "activerecord", "~> 6.1"
+
+gem "faraday", "~> 1.4"
+
+gem "byebug", "~> 11.1"
