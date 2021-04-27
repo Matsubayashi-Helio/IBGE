@@ -21,6 +21,11 @@ Após clonar o repositório, execute dentro do diretório criado o comando abaix
 $ bin/setup
 ```
 
+Inicie a aplicação executando o comando abaixo:
+```bash
+$ ruby app.rb
+```
+
 ### Bibliografia e APIs de consulta
 
 ##### ActiveRecord sem Rails
