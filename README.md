@@ -1,8 +1,10 @@
 # Sobre
+
 Uma aplicação CLI desenvolvida em Ruby que consulta APIs públicas do IBGE e exibe dados estatísticos sobre os nomes da população brasileira.
 
-#### Status
- Em desenvolvimento
+#### Status: Em desenvolvimento
+
+ Acesse o [Trello](https://trello.com/b/EhVqO3St/ibge) desta aplicação para obter mais detalhes sobre o andamento do projeto.
 
 ### Requisitos
 
