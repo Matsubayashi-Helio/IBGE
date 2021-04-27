@@ -17,8 +17,7 @@ describe CityName do
             cities = CityName.cities
 
             expect(cities.first.city).to eq 'Abadia de Goiás'
-            expect(cities.first.initials).to eq 'GO'
-            expect(cities.first.state).to eq 'Goiás'
+            expect(cities.first.uf).to eq 'GO'
         end
         
         it 'should return empty if cannot return data' do

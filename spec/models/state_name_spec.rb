@@ -17,9 +17,9 @@ describe StateName do
             states = StateName.states
 
             expect(states.size).to eq 27
-            expect(states.first.initials).to eq('AC')
+            expect(states.first.uf).to eq('AC')
             expect(states.first.state).to eq('Acre')            
-            expect(states.last.initials).to eq('TO')
+            expect(states.last.uf).to eq('TO')
             expect(states.last.state).to eq('Tocantins')
         end
 

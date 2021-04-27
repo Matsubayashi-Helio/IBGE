@@ -1,10 +1,9 @@
 class CityName
 
-    attr_reader :initials, :state, :city
+    attr_reader :uf, :city
 
-    def initialize(state:, initials:, city:)
-        @state = state
-        @initials = initials
+    def initialize(uf:, city:)
+        @uf = uf
         @city = city
     end
 
@@ -15,8 +14,7 @@ class CityName
         json_response = JSON.parse(response.body, symbolize_names: true)
         cities = []
         json_response.each do |r|
-            cities << new(city: r[:nome], state: r[:microrregiao][:mesorregiao][:UF][:nome],
-                                        initials: r[:microrregiao][:mesorregiao][:UF][:sigla])
+            cities << new(city: r[:nome], uf: r[:microrregiao][:mesorregiao][:UF][:sigla] )
         end
         # byebug
         return cities

@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+set -e
+
+bundle install
+bundle exec rake db:drop:all
+bundle exec rake db:setup
+
+echo
+echo '=============== Dependências Instaladas ==============='

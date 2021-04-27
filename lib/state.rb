@@ -1,3 +1,5 @@
 class State < ActiveRecord::Base
-    validates_presence_of :state, :initials
+    has_many :cities
+
+    validates_presence_of :state, :uf
 end
