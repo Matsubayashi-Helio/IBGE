@@ -16,9 +16,9 @@ Algumas tecnologias foram utilizadas no desenvolvimento da aplicacação. Sendo 
 
 ### Começando
 
-Após clonar o repositório, execute dentro do diretório criado o comando abaixo para instalar todas as dependencias:
+Após clonar o repositório, execute dentro do diretório criado o comando abaixo para instalar todas as dependencias e criar o banco de dados:
 ```bash
-$ bundle install
+$ bin/setup
 ```
 
 ### Bibliografia e APIs de consulta
