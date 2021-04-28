@@ -24,7 +24,6 @@ describe Cli do
         end
 
         it 'show rank names for uf' do
-
             path = File.expand_path("support/get_names_by_location.json","#{File.dirname(__FILE__)}") 
             json = File.read(path)
             response = double('faraday_response', body: json, status: 200)
@@ -34,6 +33,18 @@ describe Cli do
                                                                 "| 1    | MARIA    | 752021     |",
                                                                 "| 20   | RODRIGO  | 70436      |")).to_stdout
         end
+
+        it 'show rank names for city' do
+            path = File.expand_path("support/get_names_by_location_city.json","#{File.dirname(__FILE__)}") 
+            json = File.read(path)
+            response = double('faraday_response', body: json, status: 200)
+            allow(Faraday).to receive(:get).with("https://servicodados.ibge.gov.br/api/v2/censos/nomes/ranking?localidade=5200050").and_return(response)
+
+            expect{Cli.show_names_by_city('Abadia de Goiás')}.to output(include("| RANK       | NOME       | FREQUENCIA |", 
+                                                                "| 1          | MARIA      | 348        |",
+                                                                "| 18         | APARECIDA  | 23         |")).to_stdout
+        end
+
     end
 end
 
