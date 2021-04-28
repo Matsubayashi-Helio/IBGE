@@ -26,12 +26,15 @@ Inicie a aplicação executando o comando abaixo:
 $ ruby app.rb
 ```
 
-### Bibliografia e APIs de consulta
+### Manipulando Banco de Dados
 
-##### ActiveRecord sem Rails
-- https://github.com/sinatra-activerecord/sinatra-activerecord.git
-- https://github.com/joegelay/cli_journal_app.git
-- https://github.com/spikeburton/module-one-final-project-guidelines-atlanta-web-career-012819.git
+Para a criação e manipulação do banco de dados, foi utilizada a gem [Sinatra-activerecord](https://github.com/sinatra-activerecord/sinatra-activerecord), que permite utilizar as propriedades e metodos do ActiveRecord sem o Rails.
+
+Com a gem [Activerecord-import](https://github.com/zdennis/activerecord-import) que permite popular bancos de dados por 'bulk insertion', as tabelas de estados e cidades foi populada com as consultas da API de localidades.
+
+
+### APIs de consulta
+
 
 ##### APIs públicas IBGE e CSV população
 - API de Localidades: https://servicodados.ibge.gov.br/api/docs/localidades?versao=1
