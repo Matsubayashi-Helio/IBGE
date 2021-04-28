@@ -2,11 +2,12 @@
 require 'json'
 
 class StateName
-    attr_reader :uf, :state
+    attr_reader :uf, :state, :location_id
 
-    def initialize(state:, uf:)
+    def initialize(state:, uf:, location_id:)
         @state = state
         @uf = uf
+        @location_id = location_id
     end
 
     def self.states
@@ -16,7 +17,7 @@ class StateName
         json_response = JSON.parse(response.body, symbolize_names: true)
         states = []
         json_response.each do |r|
-            states << new(uf: r[:sigla], state: r[:nome])
+            states << new(uf: r[:sigla], state: r[:nome], location_id: r[:id])
         end
         return states
     end

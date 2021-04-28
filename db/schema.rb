@@ -10,17 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_27_030305) do
+ActiveRecord::Schema.define(version: 2021_04_28_151208) do
 
   create_table "cities", force: :cascade do |t|
     t.string "city"
     t.integer "state_id"
+    t.integer "location_id"
     t.index ["state_id"], name: "index_cities_on_state_id"
   end
 
   create_table "states", force: :cascade do |t|
     t.string "state"
     t.string "uf"
+    t.integer "location_id"
   end
 
 end
