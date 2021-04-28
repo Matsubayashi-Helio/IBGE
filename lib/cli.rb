@@ -1,4 +1,5 @@
 require_relative 'state'
+require_relative 'city'
 require 'terminal-table'
 require_relative 'name'
 require 'byebug'
@@ -30,7 +31,8 @@ class Cli
                 uf = select_uf
                 show_names_by_uf(uf)
             when "nomes por cidade"
-                puts '-----NOMES POR CIDADE-----'
+                city = get_city_name
+                show_names_by_city(city)
             when "frequencia"
                 puts '-----FREQUENCIA-----'
             when "ajuda"
@@ -62,6 +64,24 @@ class Cli
             rows << [n[:ranking], n[:nome], n[:frequencia]]
         end
         table_location = Terminal::Table.new title: "NOMES MAIS COMUNS DE #{uf.upcase}", :headings => ['RANK', 'NOME', 'FREQUENCIA'], :rows => rows
+        puts table_location
+    end
+
+    def self.get_city_name
+        print 'Digite o nome da cidade:'
+        input = $stdin.gets.chomp
+        return input
+    end
+
+    def self.show_names_by_city(city)
+        city_obj = City.find_by(city: city)
+
+        names = Name.rank_by_location(city_obj.location_id)
+        rows = []
+        names.each do |n|
+            rows << [n[:ranking], n[:nome], n[:frequencia]]
+        end
+        table_location = Terminal::Table.new title: "NOMES MAIS COMUNS DE #{city.upcase}", :headings => ['RANK', 'NOME', 'FREQUENCIA'], :rows => rows
         puts table_location
     end
 

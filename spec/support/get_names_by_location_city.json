@@ -1,0 +1,108 @@
+[
+    {
+        "localidade": "5200050",
+        "sexo": null,
+        "res": [
+            {
+                "nome": "MARIA",
+                "frequencia": 348,
+                "ranking": 1
+            },
+            {
+                "nome": "JOSE",
+                "frequencia": 156,
+                "ranking": 2
+            },
+            {
+                "nome": "JOAO",
+                "frequencia": 130,
+                "ranking": 3
+            },
+            {
+                "nome": "ANA",
+                "frequencia": 122,
+                "ranking": 4
+            },
+            {
+                "nome": "ANTONIO",
+                "frequencia": 76,
+                "ranking": 5
+            },
+            {
+                "nome": "CARLOS",
+                "frequencia": 54,
+                "ranking": 6
+            },
+            {
+                "nome": "MARCOS",
+                "frequencia": 50,
+                "ranking": 8
+            },
+            {
+                "nome": "PAULO",
+                "frequencia": 50,
+                "ranking": 7
+            },
+            {
+                "nome": "LUIZ",
+                "frequencia": 48,
+                "ranking": 9
+            },
+            {
+                "nome": "LUCAS",
+                "frequencia": 46,
+                "ranking": 10
+            },
+            {
+                "nome": "PEDRO",
+                "frequencia": 45,
+                "ranking": 11
+            },
+            {
+                "nome": "GABRIEL",
+                "frequencia": 34,
+                "ranking": 12
+            },
+            {
+                "nome": "DANIEL",
+                "frequencia": 32,
+                "ranking": 13
+            },
+            {
+                "nome": "DIVINO",
+                "frequencia": 28,
+                "ranking": 14
+            },
+            {
+                "nome": "RAFAEL",
+                "frequencia": 28,
+                "ranking": 15
+            },
+            {
+                "nome": "DIVINA",
+                "frequencia": 26,
+                "ranking": 16
+            },
+            {
+                "nome": "VICTOR",
+                "frequencia": 24,
+                "ranking": 17
+            },
+            {
+                "nome": "SEBASTIAO",
+                "frequencia": 23,
+                "ranking": 20
+            },
+            {
+                "nome": "MATEUS",
+                "frequencia": 23,
+                "ranking": 19
+            },
+            {
+                "nome": "APARECIDA",
+                "frequencia": 23,
+                "ranking": 18
+            }
+        ]
+    }
+]
