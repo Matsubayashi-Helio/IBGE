@@ -1,3 +1,5 @@
+require "sinatra/activerecord"
+
 class State < ActiveRecord::Base
     has_many :cities
 

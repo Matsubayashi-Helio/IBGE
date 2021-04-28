@@ -14,6 +14,12 @@ describe Cli do
             "FREQUENCIA\t\t:mostrar a frequencia dos nomes ao longo das décadas",
             "SAIR\t\t\t:encerra a aplicação")).to_stdout
         end
+
+        it 'show list of ufs' do
+            allow($stdin).to receive(:gets).and_return('TO')
+
+            expect {Cli.select_uf}.to output(include("UF | ESTADO", "AC | Acre", "TO | Tocantins")).to_stdout
+        end
     end
 end
 

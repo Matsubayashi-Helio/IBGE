@@ -16,3 +16,5 @@ gem "faraday", "~> 1.4"
 gem "byebug", "~> 11.1"
 
 gem "activerecord-import", "~> 1.0"
+
+gem "terminal-table", "~> 3.0"

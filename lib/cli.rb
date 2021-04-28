@@ -1,3 +1,6 @@
+require_relative 'state'
+require 'terminal-table'
+
 class Cli
 
     def self.welcome
@@ -35,6 +38,18 @@ class Cli
         end
     end
 
+    def self.select_uf
+        rows = []
+        State.all.each do |s|
+            rows << [s.uf, s.state]
+        end
+        uf_table = Terminal::Table.new :headings => ['UF', 'ESTADO'], :rows => rows
+        puts uf_table
+        print 'Digite a UF que deseja:'
+        input = $stdin.gets.chomp
+
+        return input
+    end
 
 
 end
