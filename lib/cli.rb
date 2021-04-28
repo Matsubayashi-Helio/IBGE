@@ -1,6 +1,6 @@
 require_relative 'state'
 require 'terminal-table'
-require 'name'
+require_relative 'name'
 require 'byebug'
 
 class Cli
@@ -27,8 +27,8 @@ class Cli
 
             case input.downcase
             when "nomes por uf"
-                # uf = select_uf
-                # show_names_by_uf(uf)
+                uf = select_uf
+                show_names_by_uf(uf)
             when "nomes por cidade"
                 puts '-----NOMES POR CIDADE-----'
             when "frequencia"
@@ -55,14 +55,13 @@ class Cli
     end
 
     def self.show_names_by_uf(uf)
-        state = State.find_by(uf: uf)
+        state = State.find_by(uf: uf.upcase)
         names = Name.rank_by_location(state.location_id)
         rows = []
-        # byebug
         names.each do |n|
             rows << [n[:ranking], n[:nome], n[:frequencia]]
         end
-        table_location = Terminal::Table.new :headings => ['RANK', 'NOME', 'FREQUENCIA'], :rows => rows
+        table_location = Terminal::Table.new title: "NOMES MAIS COMUNS DE #{uf.upcase}", :headings => ['RANK', 'NOME', 'FREQUENCIA'], :rows => rows
         puts table_location
     end
 

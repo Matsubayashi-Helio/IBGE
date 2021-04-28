@@ -1,5 +1,7 @@
 require 'byebug'
+require_relative '../config/environment'
 
+puts 'Populating states table...'
 state_table = []
 states = StateName.states
 states.each do |s|
@@ -7,6 +9,7 @@ states.each do |s|
 end
 State.import state_table, validate: true
 
+puts 'Populating cities table...'
 city_table = []
 cities = CityName.cities
 cities.each do |c|
@@ -16,5 +19,5 @@ end
 City.import city_table, validate: true
 
 
-byebug
+# byebug
 puts 'Done'
