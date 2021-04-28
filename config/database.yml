@@ -1,6 +1,6 @@
 development:
   adapter: 'sqlite3'
-  database: 'db/dev-ibge.db'
+  database: 'db/ibge.db'
 
 test:
   adapter: 'sqlite3'
