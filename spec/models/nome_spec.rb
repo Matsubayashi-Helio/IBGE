@@ -74,5 +74,21 @@ describe Name do
                 expect(names_gender_f.length).to eq 0
             end
         end
+
+        it 'should get name frequency across the decades' do
+            path = File.expand_path("support/get_names_frequency.json","#{File.dirname(__FILE__)}/..") 
+            json = File.read(path)
+            response = double('faraday_response', body: json, status: 200)
+            allow(Faraday).to receive(:get).with("https://servicodados.ibge.gov.br/api/v2/censos/nomes/joao%7Cmaria").and_return(response)
+
+            names_frequency = Name.names_frequency('joao, maria')
+
+            expect(names_frequency.first[:nome]).to eq('JOAO')
+            expect(names_frequency.first[:res].first[:periodo]).to eq('1930[')
+            expect(names_frequency.first[:res].first[:frequencia]).to eq(60155)
+            expect(names_frequency.first[:res].last[:periodo]).to eq('[2000,2010[')
+            expect(names_frequency.first[:res].last[:frequencia]).to eq(794118)
+            expect(names_frequency.last[:nome]).to eq('MARIA')
+        end
     end
 end

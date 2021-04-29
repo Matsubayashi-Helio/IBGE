@@ -6,6 +6,7 @@ require 'byebug'
 
 class Cli
 
+
     def self.welcome
         puts "Bem vindo! Esta aplicação fornece dados da população brasileira."
     end
@@ -34,7 +35,8 @@ class Cli
                 city = get_city_name
                 show_names_by_city(city)
             when "frequencia"
-                puts '-----FREQUENCIA-----'
+                names = get_names
+                show_names_frequency(names)
             when "ajuda"
                 help
             else
@@ -85,4 +87,40 @@ class Cli
         puts table_location
     end
 
+    def self.get_names
+        print 'Digite um ou mais nomes, separados por vírgula(,):'
+        input = $stdin.gets.chomp
+        return input
+    end
+
+    def self.show_names_frequency(names)
+        result = Name.names_frequency(names)
+        rows = []
+        heading = ['PERÍODO']
+        decade = []
+        result.each do |name|
+          heading << name[:nome]
+          name[:res].each do |h| 
+            decade << h[:periodo] #.gsub(/\[/, '')
+          end
+        end
+
+        decade.uniq!.each do |d|
+          row = []
+          row << d
+
+          result.each do |name|
+            found_decade = name[:res].find { |i| i[:periodo] == d }
+            row << found_decade[:frequencia] if found_decade
+          end
+          rows << row
+        end
+
+        table_frequency = Terminal::Table.new title: 'FREQUÊNCIA DE NOME POR DÉCADA', headings: heading, rows: rows
+        puts table_frequency
+    end
+
 end
+
+
+  

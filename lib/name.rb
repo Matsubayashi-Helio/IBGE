@@ -30,4 +30,13 @@ class Name
 
         return json_response[0][:res]
     end
+
+    def self.names_frequency(names)
+        response = Faraday.get("https://servicodados.ibge.gov.br/api/v2/censos/nomes/#{names.gsub(',','%7C').gsub(/\s+/, "")}")
+        return [] if response.status != 200
+
+        json_response = JSON.parse(response.body, symbolize_names: true)
+        # byebug
+        return json_response
+    end
 end

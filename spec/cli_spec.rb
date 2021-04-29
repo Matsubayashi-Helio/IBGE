@@ -45,6 +45,18 @@ describe Cli do
                                                                 "| 18         | APARECIDA  | 23         |")).to_stdout
         end
 
+        it 'show names frequency by decade' do
+            path = File.expand_path("support/get_names_frequency.json","#{File.dirname(__FILE__)}") 
+            json = File.read(path)
+            response = double('faraday_response', body: json, status: 200)
+            allow(Faraday).to receive(:get).with("https://servicodados.ibge.gov.br/api/v2/censos/nomes/joao%7Cmaria").and_return(response)
+
+            expect{Cli.show_names_frequency('joao, maria')}.to output(
+                                            include("| PERÍODO     | JOAO   | MARIA   |",
+                                                    "| 1930[       | 60155  | 336477  |",
+                                                    "| [2000,2010[ | 794118 | 1111301 |")).to_stdout
+        end
+
     end
 end
 
