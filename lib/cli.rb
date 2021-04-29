@@ -62,10 +62,12 @@ class Cli
         state = State.find_by(uf: uf.upcase)
         names = Name.rank_by_location(state.location_id)
         rows = []
+        # byebug
         names.each do |n|
-            rows << [n[:ranking], n[:nome], n[:frequencia]]
+            percentage = percentage_total(state.population_2019, n[:frequencia])
+            rows << [n[:ranking], n[:nome], n[:frequencia], percentage]
         end
-        table_location = Terminal::Table.new title: "NOMES MAIS COMUNS DE #{uf.upcase}", :headings => ['RANK', 'NOME', 'FREQUENCIA'], :rows => rows
+        table_location = Terminal::Table.new title: "NOMES MAIS COMUNS DE #{uf.upcase}", :headings => ['RANK', 'NOME', 'FREQUENCIA', '% RELATIVA'], :rows => rows
         puts table_location
     end
 
@@ -81,9 +83,10 @@ class Cli
         names = Name.rank_by_location(city_obj.location_id)
         rows = []
         names.each do |n|
-            rows << [n[:ranking], n[:nome], n[:frequencia]]
+            percentage = percentage_total(city_obj.population_2019, n[:frequencia])
+            rows << [n[:ranking], n[:nome], n[:frequencia], percentage]
         end
-        table_location = Terminal::Table.new title: "NOMES MAIS COMUNS DE #{city.upcase}", :headings => ['RANK', 'NOME', 'FREQUENCIA'], :rows => rows
+        table_location = Terminal::Table.new title: "NOMES MAIS COMUNS DE #{city.upcase}", :headings => ['RANK', 'NOME', 'FREQUENCIA','% RELATIVA'], :rows => rows
         puts table_location
     end
 
@@ -120,7 +123,10 @@ class Cli
         puts table_frequency
     end
 
+
+    def self.percentage_total(location_total, name_total)
+        return ((name_total.to_f / location_total.to_f) * 100).ceil(3)
+    end
+
 end
-
-
   
