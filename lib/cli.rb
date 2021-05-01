@@ -4,6 +4,8 @@ require 'terminal-table'
 require_relative 'name'
 require 'byebug'
 
+require 'optparse'
+
 class Cli
 
 
@@ -20,7 +22,7 @@ class Cli
         puts "  FREQUENCIA\t\t:mostrar a frequencia dos nomes ao longo das décadas"
         puts "  SAIR\t\t\t:encerra a aplicação"
     end
-    
+
     def self.main
         while true
             print "Para lista de todos os comandos digite 'ajuda'."
@@ -153,7 +155,7 @@ class Cli
         end
 
         table_frequency = Terminal::Table.new title: 'FREQUÊNCIA DE NOME POR DÉCADA ATÉ 2010', headings: heading, rows: rows
-        for c in 0..2 do table_frequency.align_column(c,:center) end
+        for c in 0..names.length do table_frequency.align_column(c,:center) end
         puts table_frequency
     end
 
