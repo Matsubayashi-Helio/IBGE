@@ -10,7 +10,7 @@ state_table = []
 states = StateName.states
 states.each do |s|
     p = csv.find { |i| i['Cód.'].to_i == s.location_id }
-    state_table << State.new(state: s.state, uf: s.uf, location_id: s.location_id, population_2019: p['População Residente - 2019'])
+    state_table << State.new(name: s.name, uf: s.uf, location_id: s.location_id, population_2019: p['População Residente - 2019'])
 end
 State.import state_table, validate: true
 
@@ -20,7 +20,7 @@ cities = CityName.cities
 cities.each do |c|
     p = csv.find { |i| i['Cód.'].to_i == c.location_id }
     state = State.find_by(uf: c.uf)
-    city_table << City.new(city: c.city, state: state, location_id: c.location_id, population_2019: p['População Residente - 2019'] )
+    city_table << City.new(name: c.name, state: state, location_id: c.location_id, population_2019: p['População Residente - 2019'] )
 end
 City.import city_table, validate: true
 

@@ -6,6 +6,11 @@ class Test
     end
 end
 
+puts 'HELLO!!!!! THIS I A CLI APPLICATION WHERE SOMETHING IS DONE!!!'
+puts 
+puts
+
+
 OptionParser.new do |opt|
     opt.banner = "Usage app.rb [options]"
     opt.on("-uf", "Mostra uma lista de todos os estados e exibe nomes mais comuns de UF selecionada") do
@@ -33,4 +38,10 @@ end.parse!
 
 # p ARGV
 
+
+puts 'What would you like to do?'
+puts 'Type opt.rb --help to see all options'
+input = gets.chomp
+
+system("ruby #{input}")
 

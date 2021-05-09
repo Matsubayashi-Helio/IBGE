@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_30_190430) do
+ActiveRecord::Schema.define(version: 2021_05_09_083753) do
 
   create_table "cities", force: :cascade do |t|
-    t.string "city", null: false
+    t.string "name", null: false
     t.integer "state_id", null: false
     t.integer "location_id", null: false
     t.integer "population_2019"
@@ -22,12 +22,12 @@ ActiveRecord::Schema.define(version: 2021_04_30_190430) do
   end
 
   create_table "states", force: :cascade do |t|
-    t.string "state", null: false
+    t.string "name", null: false
     t.string "uf", null: false
     t.integer "location_id", null: false
     t.integer "population_2019"
     t.index ["location_id"], name: "index_states_on_location_id", unique: true
-    t.index ["state"], name: "index_states_on_state", unique: true
+    t.index ["name"], name: "index_states_on_name", unique: true
     t.index ["uf"], name: "index_states_on_uf", unique: true
   end
 

@@ -33,25 +33,15 @@ class Cli
 
             case input.downcase
             when "nomes por uf"
-                loop do
-                    uf = select_uf
-                    table = show_names_by_uf(uf)
-                    if table
-                        puts table
-                        break
-                    end
-                    puts 'UF não encontrada. Verifique se sigla está correta'
-                end
+                uf = select_uf
+                show_names_by_uf(uf)
+                show_names_by_uf(uf, 'F')
+                show_names_by_uf(uf, 'M')
             when "nomes por cidade"
-                loop do
                 city = input_format(get_city_name)
-                table = show_names_by_city(city)
-                    if table
-                        puts table
-                        break
-                    end
-                    puts 'Cidade não encontrada. Verifique se acentuação está correta.'
-                end
+                show_names_by_city(city)
+                show_names_by_city(city, 'F')
+                show_names_by_city(city, 'M')
             when "frequencia"
                 loop do
                     names = get_names
@@ -72,7 +62,7 @@ class Cli
     def self.select_uf
         rows = []
         State.all.each do |s|
-            rows << [s.uf, s.state]
+            rows << [s.uf, s.name]
         end
         uf_table = Terminal::Table.new :headings => ['UF', 'ESTADO'], :rows => rows
         puts uf_table
@@ -82,39 +72,46 @@ class Cli
         return input.upcase
     end
 
-    def self.show_names_by_uf(uf)
+
+    def self.show_names_by_uf(uf, gender = {})
         state = State.find_by(uf: uf.upcase)
         return nil unless state
+        table = show_table(state, gender)
 
-        names = Name.rank_by_location(state.location_id)
-        rows = []
-        # byebug
-        names.each do |n|
-            percentage = percentage_total(state.population_2019, n[:frequencia])
-            rows << [n[:ranking], n[:nome], n[:frequencia], percentage]
-        end
-        table_location = Terminal::Table.new title: "NOMES MAIS COMUNS DE #{uf.upcase}", :headings => ['RANK', 'NOME', 'FREQUENCIA', '% RELATIVA'], :rows => rows
-        return table_location
+        puts table
     end
 
+    def self.show_names_by_city(city, gender = {})
+        city_obj = City.find_by(name: city)
+        return nil unless city_obj
+        table = show_table(city_obj, gender)
+
+        puts table
+    end
+
+
+    def self.show_table(location, gender = {})
+        names = Name.rank_by_location(location.location_id, gender)
+        rows = []
+        title = "NOMES MAIS COMUNS DE #{location.name.upcase}"
+                
+        unless gender.empty?
+            if gender == 'F' then title += " (FEMININO)" else title += " (MASCULINO)" end 
+        end
+
+        names.each do |n|
+            percentage = percentage_total(location.population_2019, n[:frequencia])
+            rows << [n[:ranking], n[:nome], n[:frequencia], percentage]
+        end
+        table_location = Terminal::Table.new title: title, :headings => ['RANK', 'NOME', 'FREQUENCIA', '% RELATIVA'], :rows => rows
+
+        return table_location
+    end
+    
     def self.get_city_name
         print 'Digite o nome da cidade:'
         input = $stdin.gets.chomp
         return input
-    end
-
-    def self.show_names_by_city(city)
-        city_obj = City.find_by(city: city)
-        return nil unless city_obj
-
-        names = Name.rank_by_location(city_obj.location_id)
-        rows = []
-        names.each do |n|
-            percentage = percentage_total(city_obj.population_2019, n[:frequencia])
-            rows << [n[:ranking], n[:nome], n[:frequencia], percentage]
-        end
-        table_location = Terminal::Table.new title: "NOMES MAIS COMUNS DE #{city.upcase}", :headings => ['RANK', 'NOME', 'FREQUENCIA','% RELATIVA'], :rows => rows
-        return table_location
     end
 
     def self.get_names
@@ -133,7 +130,7 @@ class Cli
         names.each do |name|
           heading << name[:nome]
           name[:res].each do |h| 
-            decade << h[:periodo] #.gsub(/\[/, '')
+            decade << h[:periodo]
           end
         end
 
