@@ -2,10 +2,19 @@ require 'spec_helper'
 require 'cli'
 require 'faraday'
 require 'name'
+require 'byebug'
+require 'json'
+
 
 describe Cli do
+
+    before(:all) do
+        IBGE_API_NAMES = "ttest"
+    end
+
+
     context 'Run application' do
-        it 'should show welcome message' do
+        xit 'should show welcome message' do
             expect {Cli.welcome}.to output("Bem vindo! Esta aplicação fornece dados da população brasileira.\n").to_stdout
         end
 
@@ -28,7 +37,6 @@ describe Cli do
             json = File.read(path)
             response = double('faraday_response', body: json, status: 200)
             allow(Faraday).to receive(:get).with("https://servicodados.ibge.gov.br/api/v2/censos/nomes/ranking?localidade=33").and_return(response)
-
             expect{Cli.show_names_by_uf('RJ')}.to output(include("| RANK | NOME     | FREQUENCIA |", 
                                                                 "| 1    | MARIA    | 752021     |",
                                                                 "| 20   | RODRIGO  | 70436      |")).to_stdout
@@ -40,9 +48,9 @@ describe Cli do
             response = double('faraday_response', body: json, status: 200)
             allow(Faraday).to receive(:get).with("https://servicodados.ibge.gov.br/api/v2/censos/nomes/ranking?localidade=5200050").and_return(response)
 
-            expect{Cli.show_names_by_city('Abadia de Goiás')}.to output(include("| RANK       | NOME       | FREQUENCIA |", 
-                                                                "| 1          | MARIA      | 348        |",
-                                                                "| 18         | APARECIDA  | 23         |")).to_stdout
+            expect{Cli.show_names_by_city('Abadia de Goiás')}.to output(include("| RANK | NOME      | FREQUENCIA | % RELATIVA |", 
+                                                                "| 1    | MARIA     | 348        | 3.967      |",
+                                                                "| 18   | APARECIDA | 23         | 0.263      |")).to_stdout
         end
 
         it 'show names frequency by decade' do
@@ -50,11 +58,13 @@ describe Cli do
             json = File.read(path)
             response = double('faraday_response', body: json, status: 200)
             allow(Faraday).to receive(:get).with("https://servicodados.ibge.gov.br/api/v2/censos/nomes/joao%7Cmaria").and_return(response)
+            
+            names_joao_and_maria = JSON.parse(json, symbolize_names: true)
 
-            expect{Cli.show_names_frequency('joao, maria')}.to output(
-                                            include("| PERÍODO     | JOAO   | MARIA   |",
-                                                    "| 1930[       | 60155  | 336477  |",
-                                                    "| [2000,2010[ | 794118 | 1111301 |")).to_stdout
+            expect{Cli.show_names_frequency(names_joao_and_maria)}.to output(
+                                            include("| PERÍODO     | JOAO        | MARIA      |",
+                                                    "|   < 1930    |    60155    |   336477   |",
+                                                    "|    2000     |   794118    |  1111301   |")).to_stdout
         end
 
     end

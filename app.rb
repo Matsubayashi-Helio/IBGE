@@ -2,5 +2,11 @@
 
 require_relative 'config/environment'
 
-Cli.welcome
+puts "Bem vindo! Esta aplicação fornece dados da população brasileira."
+puts
+puts
+
+
+
+
 Cli.main

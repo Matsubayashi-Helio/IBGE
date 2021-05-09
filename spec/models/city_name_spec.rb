@@ -16,7 +16,7 @@ describe CityName do
             
             cities = CityName.cities
 
-            expect(cities.first.city).to eq 'Abadia de Goiás'
+            expect(cities.first.name).to eq 'Abadia de Goiás'
             expect(cities.first.uf).to eq 'GO'
             expect(cities.first.location_id).to eq 5200050
         end
