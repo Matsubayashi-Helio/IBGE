@@ -9,4 +9,4 @@ puts
 
 
 
-Cli.main
+CliTest.main
