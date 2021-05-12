@@ -1,0 +1,108 @@
+[
+    {
+        "localidade": "3304557",
+        "sexo": null,
+        "res": [
+            {
+                "nome": "MARIA",
+                "frequencia": 307018,
+                "ranking": 1
+            },
+            {
+                "nome": "ANA",
+                "frequencia": 120449,
+                "ranking": 2
+            },
+            {
+                "nome": "JOSE",
+                "frequencia": 118239,
+                "ranking": 3
+            },
+            {
+                "nome": "JOAO",
+                "frequencia": 78940,
+                "ranking": 4
+            },
+            {
+                "nome": "CARLOS",
+                "frequencia": 73759,
+                "ranking": 5
+            },
+            {
+                "nome": "PAULO",
+                "frequencia": 62312,
+                "ranking": 6
+            },
+            {
+                "nome": "ANTONIO",
+                "frequencia": 60872,
+                "ranking": 7
+            },
+            {
+                "nome": "LUIZ",
+                "frequencia": 52251,
+                "ranking": 8
+            },
+            {
+                "nome": "JORGE",
+                "frequencia": 48609,
+                "ranking": 9
+            },
+            {
+                "nome": "MARCOS",
+                "frequencia": 44086,
+                "ranking": 10
+            },
+            {
+                "nome": "PEDRO",
+                "frequencia": 43104,
+                "ranking": 11
+            },
+            {
+                "nome": "GABRIEL",
+                "frequencia": 39181,
+                "ranking": 12
+            },
+            {
+                "nome": "MARCELO",
+                "frequencia": 38921,
+                "ranking": 13
+            },
+            {
+                "nome": "LUCAS",
+                "frequencia": 37329,
+                "ranking": 14
+            },
+            {
+                "nome": "RAFAEL",
+                "frequencia": 36501,
+                "ranking": 15
+            },
+            {
+                "nome": "LUIS",
+                "frequencia": 34435,
+                "ranking": 16
+            },
+            {
+                "nome": "FRANCISCO",
+                "frequencia": 31853,
+                "ranking": 17
+            },
+            {
+                "nome": "MARCIA",
+                "frequencia": 31731,
+                "ranking": 18
+            },
+            {
+                "nome": "RODRIGO",
+                "frequencia": 30711,
+                "ranking": 19
+            },
+            {
+                "nome": "ANDRE",
+                "frequencia": 30387,
+                "ranking": 20
+            }
+        ]
+    }
+]
