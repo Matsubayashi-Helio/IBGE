@@ -1,0 +1,108 @@
+[
+    {
+        "localidade": "3304557",
+        "sexo": "f",
+        "res": [
+            {
+                "nome": "MARIA",
+                "frequencia": 305973,
+                "ranking": 1
+            },
+            {
+                "nome": "ANA",
+                "frequencia": 120059,
+                "ranking": 2
+            },
+            {
+                "nome": "MARCIA",
+                "frequencia": 31614,
+                "ranking": 3
+            },
+            {
+                "nome": "JULIANA",
+                "frequencia": 25395,
+                "ranking": 4
+            },
+            {
+                "nome": "FERNANDA",
+                "frequencia": 23471,
+                "ranking": 5
+            },
+            {
+                "nome": "CLAUDIA",
+                "frequencia": 23283,
+                "ranking": 6
+            },
+            {
+                "nome": "PATRICIA",
+                "frequencia": 22933,
+                "ranking": 7
+            },
+            {
+                "nome": "SONIA",
+                "frequencia": 22182,
+                "ranking": 8
+            },
+            {
+                "nome": "SANDRA",
+                "frequencia": 22032,
+                "ranking": 9
+            },
+            {
+                "nome": "ADRIANA",
+                "frequencia": 21731,
+                "ranking": 10
+            },
+            {
+                "nome": "VERA",
+                "frequencia": 21727,
+                "ranking": 11
+            },
+            {
+                "nome": "LUCIANA",
+                "frequencia": 20489,
+                "ranking": 12
+            },
+            {
+                "nome": "JULIA",
+                "frequencia": 20232,
+                "ranking": 13
+            },
+            {
+                "nome": "RENATA",
+                "frequencia": 20009,
+                "ranking": 14
+            },
+            {
+                "nome": "MARIANA",
+                "frequencia": 19971,
+                "ranking": 15
+            },
+            {
+                "nome": "ALINE",
+                "frequencia": 19958,
+                "ranking": 16
+            },
+            {
+                "nome": "CARLA",
+                "frequencia": 17451,
+                "ranking": 17
+            },
+            {
+                "nome": "BEATRIZ",
+                "frequencia": 17150,
+                "ranking": 18
+            },
+            {
+                "nome": "VANESSA",
+                "frequencia": 16919,
+                "ranking": 19
+            },
+            {
+                "nome": "LUCIA",
+                "frequencia": 16596,
+                "ranking": 20
+            }
+        ]
+    }
+]

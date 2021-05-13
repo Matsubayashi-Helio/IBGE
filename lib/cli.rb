@@ -40,9 +40,9 @@ class Cli
     def self.show_names_by_uf(uf)
         state = State.find_by(uf: uf.upcase)
         return true unless state
-        puts show_table(state)
-        puts show_table(state, 'F')
-        puts show_table(state, 'M')
+        show_table(state)
+        show_table(state, 'F')
+        show_table(state, 'M')
         
         return false
     end
@@ -50,29 +50,29 @@ class Cli
     def self.show_names_by_city(city)
         city_obj = City.find_by(name: city)
         return true unless city_obj
-        puts show_table(city_obj)
-        puts show_table(city_obj, 'F')
-        puts show_table(city_obj, 'M')
+        show_table(city_obj)
+        show_table(city_obj, 'F')
+        show_table(city_obj, 'M')
         
         return false
     end
      
     def self.show_table(location, gender = {})
-    names = Name.rank_by_location(location.location_id, gender)
-    rows = []
-    title = "NOMES MAIS COMUNS DE #{location.name.upcase}"
-    
-    unless gender.empty?
-        if gender == 'F' then title += " (FEMININO)" else title += " (MASCULINO)" end 
-        end
+        names = Name.rank_by_location(location.location_id, gender)
+        rows = []
+        title = "NOMES MAIS COMUNS DE #{location.name.upcase}"
         
+        unless gender.empty?
+            if gender == 'F' then title += " (FEMININO)" else title += " (MASCULINO)" end 
+        end
+            
         names.each do |n|
             percentage = percentage_total(location.population_2019, n[:frequencia])
             rows << [n[:ranking], n[:nome], n[:frequencia], percentage]
         end
         table_location = Terminal::Table.new title: title, :headings => ['RANK', 'NOME', 'FREQUENCIA', '% RELATIVA'], :rows => rows
         
-        return table_location
+        puts table_location
     end
     
     
@@ -107,80 +107,6 @@ class Cli
         puts table_frequency
     end
 
-
-    
-    def self.uf_option(uf = {})
-    table = true
-    unless uf
-        show_ufs
-        uf = user_input_uf
-    end  
-    
-    while table
-        uf.strip!
-        table = show_names_by_uf(uf)
-        if table
-            puts 'UF inválida, digite novamente' 
-            uf = user_input_uf
-        end
-    end
-end
-
-def self.city_option(input)
-    table = true
-    city = input_format(input)
-    while table
-        city.strip!
-        table = show_names_by_city(city)
-        if table
-            puts 'Cidade não encontrada, vefirique acentuação.'
-            city = input_format(get_city_name)
-        end  
-        end
-    end
-    
-    def self.frequency_option(input)
-        names = input.join(',')
-        api_names = Name.names_frequency(names.strip!)
-        loop do
-            
-            unless api_names.empty?
-                show_names_frequency(api_names)
-                break
-            end
-            puts 'Nome não contabilizado pelo IBGE, ou separador dos nomes está incorreto.'
-            api_names = get_names
-        end
-    end
-    
-    def self.tips
-        puts 
-        puts 
-        puts 'Algumas dicas para a consulta de nomes ou localidades:'
-        puts 
-        puts
-    
-        puts '---> Verifique se cidade/estado possui acentos'
-        puts
-        puts '---> Caso nenhuma UF for informada no comando --uf, uma lista'
-        puts '     com todas as UFs será exibida para consulta.'
-        puts
-        puts '---> Nomes compostos não foram considerados.'
-        puts '     Somente nomes singulares retornarão a frequencia.'
-        puts
-        puts '---> Para a consulta de mais de um nome por vez utilize'
-        puts '     o separador vírgula(,) sem espaco entre os nomes.'
-        puts '     Ex: Ana, Pedro, Maria'
-        puts
-        puts '---> Não são considerados acentos na busca de nomes.'
-        puts '     Ambos Antônio e Antonio se referem ao mesmo nome.'
-        puts
-        puts '---> A quantidade mínima de ocorrências para que o nome seja'
-        puts '     considerado é de 10 por município e 15 por UF.'
-        puts
-        puts
-    end
-
     def self.command_check(input)
         keyword = input.split(' ')
 #       options = ['-u', '--uf', '-c', '--cidade', '-f', '--frequencia', '-h', '--help', '-x', '--sair', '-d', '--dicas']
@@ -188,6 +114,7 @@ def self.city_option(input)
         if keyword.first == 'app'
             aux = keyword.drop(1)
             command = aux.join(' ')
+            # byebug
             Parser.parse %W[#{command}]
         else
             return input
