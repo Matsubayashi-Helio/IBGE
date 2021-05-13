@@ -5,13 +5,18 @@ require 'byebug'
 
 
 describe CityName do
+    
+    before(:all) do
+        IBGE_LOCATION_API = "https://servicodados.ibge.gov.br/api/v1/localidades/municipios?orderBy=nome".freeze
+    end
+
     context 'Fetch API Data' do
         it 'should get all cities' do
             path = File.expand_path("support/get_cities.json","#{File.dirname(__FILE__)}/..") 
             json = File.read(path)
             response = double('faraday_response', body: json, status: 200)
             allow(Faraday).to receive(:get)
-                        .with('https://servicodados.ibge.gov.br/api/v1/localidades/municipios?orderBy=nome')
+                        .with(IBGE_LOCATION_API)
                         .and_return(response)
             
             cities = CityName.cities
@@ -24,7 +29,7 @@ describe CityName do
         it 'should return empty if cannot return data' do
             response = double('faraday_response', body: '', status: 400)
             allow(Faraday).to receive(:get)
-                        .with('https://servicodados.ibge.gov.br/api/v1/localidades/municipios?orderBy=nome')
+                        .with(IBGE_LOCATION_API)
                         .and_return(response)
             
             cities = CityName.cities

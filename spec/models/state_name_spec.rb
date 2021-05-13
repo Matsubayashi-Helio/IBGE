@@ -5,13 +5,18 @@ require 'byebug'
 
 
 describe StateName do
+    
+    before(:all) do
+        IBGE_LOCATION_API = "https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome".freeze
+    end
+
     context 'Fetch API Data' do
         it 'should get all states' do
             path = File.expand_path("support/get_states.json","#{File.dirname(__FILE__)}/..") 
             json = File.read(path)
             response = double('faraday_response', body: json, status: 200)
             allow(Faraday).to receive(:get)
-                        .with('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome')
+                        .with(IBGE_LOCATION_API)
                         .and_return(response)
 
             states = StateName.states
@@ -28,7 +33,7 @@ describe StateName do
         it 'should return empty if cannot return data' do
             response = double('faraday_response', body: '', status: 400)
             allow(Faraday).to receive(:get)
-                        .with('https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome')
+                        .with(IBGE_LOCATION_API)
                         .and_return(response)
             states = StateName.states
 
