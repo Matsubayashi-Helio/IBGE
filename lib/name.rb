@@ -28,6 +28,7 @@ class Name
     end
 
     def self.names_frequency(names)
+        # byebug
         api_path = IGBE_NAMES_API_FREQUENCY + "#{names.gsub(',','%7C').gsub(/\s+/, "")}"
         response = Faraday.get(api_path)
         return [] if response.status != 200

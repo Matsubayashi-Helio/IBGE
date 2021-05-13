@@ -10,15 +10,34 @@ require 'stringio'
 
 describe Cli do
 
-    before(:each) do
+    before(:all) do
         IBGE_NAMES_API = "https://servicodados.ibge.gov.br/api/v2/censos/nomes/ranking?localidade=".freeze
         IGBE_NAMES_API_FREQUENCY = "https://servicodados.ibge.gov.br/api/v2/censos/nomes/".freeze
     end
 
     context 'User input' do
+        it '.user_input_uf' do
+            io = StringIO.new
+            io.puts 'SP'
+            io.rewind
+            $stdin = io
 
-        it 'show list of ufs' do
-            expect {Cli.select_uf}.to output(include("UF | ESTADO", "AC | Acre", "TO | Tocantins")).to_stdout
+            input_uf = Cli.user_input_uf
+            expect(input_uf).to eq 'SP'
+
+            $stdin = STDIN
+        end
+        
+        it '.get_city_name' do
+            io = StringIO.new
+            io.puts 'são paulo'
+            io.rewind
+            $stdin = io
+
+            input_uf = Cli.user_input_uf
+            expect(input_uf).to eq 'são paulo'
+            
+            $stdin = STDIN
         end
 
         it '.get_names' do
@@ -49,105 +68,166 @@ describe Cli do
         end
     end
 
+    context 'show tables for the user' do
+        context '.show_names_by_uf' do
+            it 'return false if nothing goes wrong' do
+                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
 
-    context '.show_names_by_uf' do
-        it 'return false if nothing goes wrong' do
-            rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
-
-            path = File.expand_path("support/get_names_by_uf.json","#{File.dirname(__FILE__)}") 
-            json = File.read(path)
-            response = double('faraday_response', body: json, status: 200)
-            api_path = IBGE_NAMES_API + "#{rj.location_id}"
-            allow(Faraday).to receive(:get).with(api_path).and_return(response)
+                allow(Name).to receive(:rank_by_location).and_return([])
+                uf = Cli.show_names_by_uf('RJ')
             
-            path_f = File.expand_path("support/get_names_by_uf_and_gender_F.json","#{File.dirname(__FILE__)}") 
-            json_f = File.read(path_f)
-            response_f = double('faraday_response', body: json_f, status: 200)
-            api_path_f = IBGE_NAMES_API + "#{rj.location_id}&sexo=F"
-            allow(Faraday).to receive(:get).with(api_path_f).and_return(response_f)
-            
-            path_m = File.expand_path("support/get_names_by_uf_and_gender_M.json","#{File.dirname(__FILE__)}") 
-            json_m = File.read(path_m)
-            response_m = double('faraday_response', body: json_m, status: 200)
-            api_path_m = IBGE_NAMES_API + "#{rj.location_id}&sexo=M"
-            allow(Faraday).to receive(:get).with(api_path_m).and_return(response_m)
+                expect(uf).to eq false
+            end
 
-            uf = Cli.show_names_by_uf('RJ')
-           
-            expect(uf).to eq false
-            expect{Cli.show_names_by_uf('RJ')}.to output(include("| RANK | NOME     | FREQUENCIA | % RELATIVA |", 
-                                                                "| 1    | MARIA    | 752021     | 4.356      |",
-                                                                "| 20   | RODRIGO  | 70436      | 0.408      |",
-                                                                "| NOMES MAIS COMUNS DE RIO DE JANEIRO (FEMININO) |",
-                                                                "| 20        | LETICIA  | 40526      | 0.235      |",
-                                                                "| NOMES MAIS COMUNS DE RIO DE JANEIRO (MASCULINO) |",
+            it 'return true if uf do not exist' do
+                uf = Cli.show_names_by_uf('AA')
+                expect(uf).to eq true
+            end
+        end
+
+        context '.show_names_by_city' do
+            it 'return false if nothing goes wrong' do
+                uf_rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                city_rj = City.create(name: 'Rio de Janeiro', location_id: 3304557, population_2019: 6718903, state: uf_rj)
+
+                allow(Name).to receive(:rank_by_location).and_return([])
+                city = Cli.show_names_by_city('Rio de Janeiro')
+
+                expect(city).to eq false
+            end
+
+            it 'return true if city do not exist' do
+                city = Cli.show_names_by_city('Paris')
+                expect(city).to eq true
+            end
+
+            it 'show names frequency by decade' do
+                path = File.expand_path("support/get_names_frequency.json","#{File.dirname(__FILE__)}") 
+                json = File.read(path)
+                response = double('faraday_response', body: json, status: 200)
+                allow(Faraday).to receive(:get).with("https://servicodados.ibge.gov.br/api/v2/censos/nomes/joao%7Cmaria").and_return(response)
+                
+                names_joao_and_maria = JSON.parse(json, symbolize_names: true)
+
+                expect{Cli.show_names_frequency(names_joao_and_maria)}.to output(
+                                                include("| PERÍODO     | JOAO        | MARIA      |",
+                                                        "|   < 1930    |    60155    |   336477   |",
+                                                        "|    2000     |   794118    |  1111301   |")).to_stdout
+            end
+        end
+
+        context '.show_table' do
+            it 'shows table with rank of the most common names for uf' do
+                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+
+                path = File.expand_path("support/get_names_by_uf.json","#{File.dirname(__FILE__)}") 
+                json = File.read(path)
+                response = double('faraday_response', body: json, status: 200)
+                api_path = IBGE_NAMES_API + "#{rj.location_id}"
+                allow(Faraday).to receive(:get).with(api_path).and_return(response)
+
+                expect{Cli.show_table(rj)}.to output(include("| RANK | NOME     | FREQUENCIA | % RELATIVA |",
+                                                            "| 1    | MARIA    | 752021     | 4.356      |",
+                                                            "| 20   | RODRIGO  | 70436      | 0.408      |")).to_stdout
+            end
+
+            it 'shows table with rank of the most common female names for uf' do
+                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+
+                path_f = File.expand_path("support/get_names_by_uf_and_gender_F.json","#{File.dirname(__FILE__)}") 
+                json_f = File.read(path_f)
+                response_f = double('faraday_response', body: json_f, status: 200)
+                api_path_f = IBGE_NAMES_API + "#{rj.location_id}&sexo=F"
+                allow(Faraday).to receive(:get).with(api_path_f).and_return(response_f)
+
+                expect{Cli.show_table(rj, 'F')}.to output(include("| NOMES MAIS COMUNS DE RIO DE JANEIRO (FEMININO) |",
+                                                                "| 1         | MARIA    | 749527     | 4.342      |",
+                                                                "| 20        | LETICIA  | 40526      | 0.235      |")).to_stdout
+            end
+
+            it 'shows table with rank of the most common male names for uf' do
+                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+
+                path_m = File.expand_path("support/get_names_by_uf_and_gender_M.json","#{File.dirname(__FILE__)}") 
+                json_m = File.read(path_m)
+                response_m = double('faraday_response', body: json_m, status: 200)
+                api_path_m = IBGE_NAMES_API + "#{rj.location_id}&sexo=M"
+                allow(Faraday).to receive(:get).with(api_path_m).and_return(response_m)
+
+                expect{Cli.show_table(rj, 'M')}.to output(include("| NOMES MAIS COMUNS DE RIO DE JANEIRO (MASCULINO) |",
+                                                                "| 1         | JOSE      | 312855     | 1.813      |",
                                                                 "| 20        | FELIPE    | 67505      | 0.391      |")).to_stdout
-        end
+            end
 
-        it 'return true if uf do not exist' do
-            uf = Cli.show_names_by_uf('AA')
-            expect(uf).to eq true
-        end
-    end
+            it 'shows table with rank of the most common names for city' do
+                uf_rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                city_rj = City.create(name: 'Rio de Janeiro', location_id: 3304557, population_2019: 6718903, state: uf_rj)
 
-    context '.show_names_by_city' do
-        it 'return false if nothing goes wrong' do
-            uf_rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
-            city_rj = City.create(name: 'Rio de Janeiro', location_id: 3304557, population_2019: 6718903, state: uf_rj)
+                path = File.expand_path("support/get_names_by_city.json","#{File.dirname(__FILE__)}") 
+                json = File.read(path)
+                response = double('faraday_response', body: json, status: 200)
+                api_path = IBGE_NAMES_API + "#{city_rj.location_id}"
+                allow(Faraday).to receive(:get).with(api_path).and_return(response)
 
-
-            path = File.expand_path("support/get_names_by_city.json","#{File.dirname(__FILE__)}") 
-            json = File.read(path)
-            response = double('faraday_response', body: json, status: 200)
-            api_path = IBGE_NAMES_API + "#{city_rj.location_id}"
-            allow(Faraday).to receive(:get).with(api_path).and_return(response)
-            
-            path_f = File.expand_path("support/get_names_by_city_and_gender_F.json","#{File.dirname(__FILE__)}") 
-            json_f = File.read(path_f)
-            response_f = double('faraday_response', body: json_f, status: 200)
-            api_path_f = IBGE_NAMES_API + "#{city_rj.location_id}&sexo=F"
-            allow(Faraday).to receive(:get).with(api_path_f).and_return(response_f)
-            
-            path_m = File.expand_path("support/get_names_by_city_and_gender_M.json","#{File.dirname(__FILE__)}") 
-            json_m = File.read(path_m)
-            response_m = double('faraday_response', body: json_m, status: 200)
-            api_path_m = IBGE_NAMES_API + "#{city_rj.location_id}&sexo=M"
-            allow(Faraday).to receive(:get).with(api_path_m).and_return(response_m)
-
-            city = Cli.show_names_by_city('Rio de Janeiro')
-
-            expect(city).to eq false
-            expect{Cli.show_names_by_city('Rio de Janeiro')}.to output(include("| RANK | NOME      | FREQUENCIA | % RELATIVA |", 
+                expect{Cli.show_table(city_rj)}.to output(include("| RANK | NOME      | FREQUENCIA | % RELATIVA |", 
                                                                 "| 1    | MARIA     | 307018     | 4.57       |",
                                                                 "| 3    | JOSE      | 118239     | 1.76       |",
-                                                                "| 20   | ANDRE     | 30387      | 0.453      |",
-                                                                "| NOMES MAIS COMUNS DE RIO DE JANEIRO (FEMININO) |",
-                                                                "| 20        | LUCIA    | 16596      | 0.248      |",
-                                                                "| NOMES MAIS COMUNS DE RIO DE JANEIRO (MASCULINO) |",
-                                                                "| 1         | JOSE      | 117746     | 1.753      |",
-                                                                "| 20        | FELIPE    | 29093      | 0.434      |")).to_stdout
+                                                                "| 20   | ANDRE     | 30387      | 0.453      |")).to_stdout
+            end
+
+            it 'shows table with rank of the most common female names for city' do
+                uf_rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                city_rj = City.create(name: 'Rio de Janeiro', location_id: 3304557, population_2019: 6718903, state: uf_rj)
+
+                path_f = File.expand_path("support/get_names_by_city_and_gender_F.json","#{File.dirname(__FILE__)}") 
+                json_f = File.read(path_f)
+                response_f = double('faraday_response', body: json_f, status: 200)
+                api_path_f = IBGE_NAMES_API + "#{city_rj.location_id}&sexo=F"
+                allow(Faraday).to receive(:get).with(api_path_f).and_return(response_f)
+
+                expect{Cli.show_table(city_rj, 'F')}.to output(include("| NOMES MAIS COMUNS DE RIO DE JANEIRO (FEMININO) |",
+                                                                    "| RANK      | NOME     | FREQUENCIA | % RELATIVA |", 
+                                                                    "| 1         | MARIA    | 305973     | 4.554      |",
+                                                                    "| 20        | LUCIA    | 16596      | 0.248      |")).to_stdout
+            end
+
+            it 'shows table with rank of the most common female names for city' do
+                uf_rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                city_rj = City.create(name: 'Rio de Janeiro', location_id: 3304557, population_2019: 6718903, state: uf_rj)
+
+                path_m = File.expand_path("support/get_names_by_city_and_gender_M.json","#{File.dirname(__FILE__)}") 
+                json_m = File.read(path_m)
+                response_m = double('faraday_response', body: json_m, status: 200)
+                api_path_m = IBGE_NAMES_API + "#{city_rj.location_id}&sexo=M"
+                allow(Faraday).to receive(:get).with(api_path_m).and_return(response_m)
+
+                expect{Cli.show_table(city_rj, 'M')}.to output(include("| NOMES MAIS COMUNS DE RIO DE JANEIRO (MASCULINO) |",
+                                                                    "| RANK      | NOME      | FREQUENCIA | % RELATIVA |", 
+                                                                    "| 1         | JOSE      | 117746     | 1.753      |",
+                                                                    "| 20        | FELIPE    | 29093      | 0.434      |")).to_stdout
+            end
         end
 
-        it 'return true if uf do not exist' do
-            city = Cli.show_names_by_city('Paris')
-            expect(city).to eq true
-        end
-
-        it 'show names frequency by decade' do
+        it '.show_names_frequency' do
             path = File.expand_path("support/get_names_frequency.json","#{File.dirname(__FILE__)}") 
             json = File.read(path)
             response = double('faraday_response', body: json, status: 200)
-            allow(Faraday).to receive(:get).with("https://servicodados.ibge.gov.br/api/v2/censos/nomes/joao%7Cmaria").and_return(response)
+            api_path = IGBE_NAMES_API_FREQUENCY + "joao%7Cmaria"
+            allow(Faraday).to receive(:get).with(api_path).and_return(response)
             
-            names_joao_and_maria = JSON.parse(json, symbolize_names: true)
+            names = 'joao, maria'
+            api_names = Name.names_frequency(names)
 
-            expect{Cli.show_names_frequency(names_joao_and_maria)}.to output(
-                                            include("| PERÍODO     | JOAO        | MARIA      |",
-                                                    "|   < 1930    |    60155    |   336477   |",
-                                                    "|    2000     |   794118    |  1111301   |")).to_stdout
+            expect{Cli.show_names_frequency(api_names)}.to output(include("| FREQUÊNCIA DE NOME POR DÉCADA ATÉ 2010 |",
+            "| PERÍODO     | JOAO        | MARIA      |", 
+            "|   < 1930    |    60155    |   336477   |",
+            "|    2000     |   794118    |  1111301   |")).to_stdout
+        end
+
+        it '.show_ufs' do
+            expect {Cli.show_ufs}.to output(include("UF | ESTADO", "AC | Acre", "TO | Tocantins")).to_stdout
         end
     end
-
 end
 
 
