@@ -1,10 +1,11 @@
-require 'spec_helper'
+# require 'spec_helper'
 require 'cli'
 require 'faraday'
 require 'name'
 require 'byebug'
 require 'json'
 require 'stringio'
+require 'test_helper'
 
 
 
@@ -80,7 +81,7 @@ describe Cli do
             end
 
             it 'return true if uf do not exist' do
-                uf = Cli.show_names_by_uf('AA')
+                uf = Cli.show_names_by_uf('RJ')
                 expect(uf).to eq true
             end
         end
@@ -225,6 +226,9 @@ describe Cli do
         end
 
         it '.show_ufs' do
+            State.create(name: 'Acre', uf: 'AC', location_id: 12, population_2019: 881935)
+            State.create(name: 'Tocantins', uf: 'TO', location_id: 17, population_2019: 1572866)
+
             expect {Cli.show_ufs}.to output(include("UF | ESTADO", "AC | Acre", "TO | Tocantins")).to_stdout
         end
     end

@@ -20,3 +20,5 @@ gem "activerecord-import", "~> 1.0"
 gem "terminal-table", "~> 3.0"
 
 gem "thor", "~> 1.1"
+
+gem "database_cleaner-active_record", "~> 2.0"
