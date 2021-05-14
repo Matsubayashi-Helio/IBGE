@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'test_helper'
 require 'city_name'
 require 'faraday'
 require 'byebug'

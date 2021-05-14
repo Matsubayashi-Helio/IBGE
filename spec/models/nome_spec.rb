@@ -1,6 +1,7 @@
-require 'spec_helper'
+require 'test_helper'
 require 'name'
 require 'faraday'
+require 'state'
 
 describe Name do
 
