@@ -72,7 +72,7 @@ describe Cli do
     context 'show tables for the user' do
         context '.show_names_by_uf' do
             it 'return false if nothing goes wrong' do
-                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                rj = create(:state, uf:'RJ')
 
                 allow(Name).to receive(:rank_by_location).and_return([])
                 uf = Cli.show_names_by_uf('RJ')
@@ -88,8 +88,8 @@ describe Cli do
 
         context '.show_names_by_city' do
             it 'return false if nothing goes wrong' do
-                uf_rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
-                city_rj = City.create(name: 'Rio de Janeiro', location_id: 3304557, population_2019: 6718903, state: uf_rj)
+                uf_rj = create(:state)
+                city_rj = create(:city, name:'Rio de Janeiro', state: uf_rj)
 
                 allow(Name).to receive(:rank_by_location).and_return([])
                 city = Cli.show_names_by_city('Rio de Janeiro')
@@ -119,7 +119,7 @@ describe Cli do
 
         context '.show_table' do
             it 'shows table with rank of the most common names for uf' do
-                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                rj = create(:state, location_id: 33)
 
                 path = File.expand_path("support/get_names_by_uf.json","#{File.dirname(__FILE__)}") 
                 json = File.read(path)
@@ -133,7 +133,7 @@ describe Cli do
             end
 
             it 'shows table with rank of the most common female names for uf' do
-                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                rj = create(:state, location_id: 33)
 
                 path_f = File.expand_path("support/get_names_by_uf_and_gender_F.json","#{File.dirname(__FILE__)}") 
                 json_f = File.read(path_f)
@@ -147,7 +147,7 @@ describe Cli do
             end
 
             it 'shows table with rank of the most common male names for uf' do
-                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                rj = create(:state, location_id: 33)
 
                 path_m = File.expand_path("support/get_names_by_uf_and_gender_M.json","#{File.dirname(__FILE__)}") 
                 json_m = File.read(path_m)
@@ -161,8 +161,8 @@ describe Cli do
             end
 
             it 'shows table with rank of the most common names for city' do
-                uf_rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
-                city_rj = City.create(name: 'Rio de Janeiro', location_id: 3304557, population_2019: 6718903, state: uf_rj)
+                uf_rj = create(:state)
+                city_rj = create(:city, name:'Rio de Janeiro', location_id: 3304557, population_2019: 6718903, state: uf_rj)
 
                 path = File.expand_path("support/get_names_by_city.json","#{File.dirname(__FILE__)}") 
                 json = File.read(path)
@@ -177,8 +177,8 @@ describe Cli do
             end
 
             it 'shows table with rank of the most common female names for city' do
-                uf_rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
-                city_rj = City.create(name: 'Rio de Janeiro', location_id: 3304557, population_2019: 6718903, state: uf_rj)
+                uf_rj = create(:state)
+                city_rj = create(:city, name:'Rio de Janeiro', location_id: 3304557, population_2019: 6718903, state: uf_rj)
 
                 path_f = File.expand_path("support/get_names_by_city_and_gender_F.json","#{File.dirname(__FILE__)}") 
                 json_f = File.read(path_f)
@@ -193,8 +193,8 @@ describe Cli do
             end
 
             it 'shows table with rank of the most common female names for city' do
-                uf_rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
-                city_rj = City.create(name: 'Rio de Janeiro', location_id: 3304557, population_2019: 6718903, state: uf_rj)
+                uf_rj = create(:state)
+                city_rj = create(:city, name:'Rio de Janeiro', location_id: 3304557, population_2019: 6718903, state: uf_rj)
 
                 path_m = File.expand_path("support/get_names_by_city_and_gender_M.json","#{File.dirname(__FILE__)}") 
                 json_m = File.read(path_m)
