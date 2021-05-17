@@ -12,7 +12,7 @@ describe Parser do
     context '.parse' do
         context '--uf [UF]' do
             it 'should show table if [UF] is informed' do
-                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                create(:state, name: 'Rio de Janeiro', uf: 'RJ')
                 allow(Name).to receive(:rank_by_location).and_return([])
                 
                 option = "--uf=RJ"
@@ -22,8 +22,9 @@ describe Parser do
             end
 
             it 'should show list of uf if [UF] is not informed' do
-                State.create(name: 'Acre', uf: 'AC', location_id: 12, population_2019: 881935)
-                State.create(name: 'Tocantins', uf: 'TO', location_id: 17, population_2019: 1572866)
+                create(:state, name: 'Acre', uf:'AC', location_id: 12)
+                create(:state, name: 'Tocantins', uf: 'TO', location_id: 17)
+
                 io = StringIO.new
                 io.puts 'AC'
                 io.rewind
@@ -36,7 +37,7 @@ describe Parser do
             end
 
             it 'should show a message if [UF] does not exist and ask to input a valid UF' do
-                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                create(:state, name: 'Rio de Janeiro', uf: 'RJ')
 
                 io = StringIO.new
                 io.puts 'RJ'
@@ -54,7 +55,7 @@ describe Parser do
 
         context '-u [UF]' do
             it 'should show table if [UF] is informed' do
-                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                create(:state, name: 'Rio de Janeiro', uf: 'RJ')
 
                 allow(Name).to receive(:rank_by_location).and_return([])
                 option = "-u RJ"
@@ -64,8 +65,8 @@ describe Parser do
             end
 
             it 'should show list of uf if [UF] is not informed' do
-                State.create(name: 'Acre', uf: 'AC', location_id: 12, population_2019: 881935)
-                State.create(name: 'Tocantins', uf: 'TO', location_id: 17, population_2019: 1572866)
+                create(:state, name: 'Acre', uf:'AC', location_id: 12)
+                create(:state, name: 'Tocantins', uf: 'TO', location_id: 17)
 
                 io = StringIO.new
                 io.puts 'AC'
@@ -78,7 +79,7 @@ describe Parser do
             end
 
             it 'should show a message if [UF] does not exist and ask to input a valid UF' do
-                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                create(:state, name: 'Rio de Janeiro', uf: 'RJ')
 
                 io = StringIO.new
                 io.puts 'RJ'
@@ -96,8 +97,8 @@ describe Parser do
 
         context '--cidade CITY' do
             it 'should show table for CITY' do
-                sp = State.create(name: 'São Paulo', uf: 'SP', location_id:35, population_2019: 45919049)
-                City.create(name: 'Campinas', location_id:3509502, population_2019: 1204073, state: sp)
+                sp = create(:state)
+                create(:city, name:'Campinas', state: sp)
                 
                 allow(Name).to receive(:rank_by_location).and_return([])
                 
@@ -108,8 +109,9 @@ describe Parser do
             end
             
             it 'should show table for CITY with more than one word' do
-                sp = State.create(name: 'São Paulo', uf: 'SP', location_id:35, population_2019: 45919049)
-                City.create(name: 'São Paulo', location_id:3550308, population_2019: 12252023, state: sp)
+                sp = create(:state)
+                create(:city, name:'São Paulo', state: sp)
+
                 allow(Name).to receive(:rank_by_location).and_return([])
                 
                 option = "--cidade=são paulo"
@@ -119,8 +121,8 @@ describe Parser do
             end
             
             it 'should show a message if CITY does not exist and ask to type a valid CITY' do
-                sp = State.create(name: 'São Paulo', uf: 'SP', location_id:35, population_2019: 45919049)
-                City.create(name: 'Campinas', location_id:3509502, population_2019: 1204073, state: sp)
+                sp = create(:state)
+                create(:city, name:'Campinas', state: sp)
 
                 io = StringIO.new
                 io.puts 'campinas'
@@ -139,8 +141,8 @@ describe Parser do
 
         context '-c CITY' do
             it 'should show table for CITY' do
-                sp = State.create(name: 'São Paulo', uf: 'SP', location_id:35, population_2019: 45919049)
-                City.create(name: 'Campinas', location_id:3509502, population_2019: 1204073, state: sp)
+                sp = create(:state)
+                create(:city, name:'Campinas', state: sp)
 
                 allow(Name).to receive(:rank_by_location).and_return([])
                 
@@ -151,8 +153,8 @@ describe Parser do
             end
 
             it 'should show table for CITY with more than one word' do
-                sp = State.create(name: 'São Paulo', uf: 'SP', location_id:35, population_2019: 45919049)
-                City.create(name: 'São Paulo', location_id:3550308, population_2019: 12252023, state: sp)
+                sp = create(:state)
+                create(:city, name:'São Paulo', state: sp)
 
                 allow(Name).to receive(:rank_by_location).and_return([])
                 
@@ -163,8 +165,8 @@ describe Parser do
             end
 
             it 'should show a message if CITY does not exist and ask to type a valid CITY' do
-                sp = State.create(name: 'São Paulo', uf: 'SP', location_id:35, population_2019: 45919049)
-                City.create(name: 'Campinas', location_id:3509502, population_2019: 1204073, state: sp)
+                sp = create(:state)
+                create(:city, name:'Campinas', state: sp)
 
                 io = StringIO.new
                 io.puts 'campinas'

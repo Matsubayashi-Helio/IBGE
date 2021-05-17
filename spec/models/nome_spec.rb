@@ -13,7 +13,7 @@ describe Name do
     context 'Fetch API Data' do
         context 'ranking of location' do
             it 'should get names' do
-                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                rj = create(:state, location_id: 33)
 
                 path = File.expand_path("support/get_names_by_uf.json","#{File.dirname(__FILE__)}/..") 
                 json = File.read(path)
@@ -32,7 +32,7 @@ describe Name do
             end
 
             it 'should return empty if cannot get data' do
-                rj = State.create(name: 'Rio de Janeiro', uf: 'RJ', location_id: 33, population_2019: 17264943)
+                rj = create(:state, location_id: 33)
 
                 response = double('faraday_response', body: '', status: 400)
                 api_path = IBGE_NAMES_API + "#{rj.location_id}"
