@@ -259,5 +259,48 @@ describe Parser do
                 $stdin = STDIN
             end
         end
+
+        context '--frequencia NAMES' do
+            it 'should show table for NAMES' do
+                path_frequency = File.expand_path("../support/get_names_frequency.json","#{File.dirname(__FILE__)}") 
+                json_frequency = File.read(path_frequency)
+                response_frequency = double('faraday_response', body: json_frequency, status: 200)
+                api_path_frequency = IGBE_NAMES_API_FREQUENCY + "joao%7Cmaria"
+                allow(Faraday).to receive(:get).with(api_path_frequency).and_return(response_frequency)
+                
+                option = "--frequencia=joao, maria"
+                expect{Parser.parse %W[#{option}]}.to output(include("| FREQUÊNCIA DE NOME POR DÉCADA ATÉ 2010 |",
+                                                            "| PERÍODO     | JOAO        | MARIA      |",
+                                                            "|   < 1930    |    60155    |   336477   |",
+                                                            "|    2000     |   794118    |  1111301   |")).to_stdout
+            end
+        
+            it 'should show a message if could not find NAMES and ask to type again' do               
+                path_frequency = File.expand_path("../support/get_names_frequency.json","#{File.dirname(__FILE__)}") 
+                json_frequency = File.read(path_frequency)
+                response_frequency = double('faraday_response', body: json_frequency, status: 200)
+                api_path_frequency = IGBE_NAMES_API_FREQUENCY + "joao%7Cmaria"
+                allow(Faraday).to receive(:get).with(api_path_frequency).and_return(response_frequency)
+                
+                response_frequency_not_found = double('faraday_response', body: [], status: 400)
+                api_path_frequency_not_found = IGBE_NAMES_API_FREQUENCY + "nonamefound"
+                allow(Faraday).to receive(:get).with(api_path_frequency_not_found).and_return(response_frequency_not_found)
+        
+                
+                io = StringIO.new
+                io.puts 'joao, maria'
+                io.rewind
+                $stdin = io
+        
+                option = "--frequencia=nonamefound"
+                expect{Parser.parse %W[#{option}]}.to output(
+                    include("Nome não contabilizado pelo IBGE, ou separador dos nomes está incorreto.",
+                                                            "| FREQUÊNCIA DE NOME POR DÉCADA ATÉ 2010 |",
+                                                            "| PERÍODO     | JOAO        | MARIA      |",
+                                                            "|   < 1930    |    60155    |   336477   |",
+                                                            "|    2000     |   794118    |  1111301   |")).to_stdout
+                $stdin = STDIN
+            end
+        end
     end
 end
