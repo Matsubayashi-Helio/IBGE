@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddNotNullToCitiesAndStatesTables < ActiveRecord::Migration[6.1]
   def change
     change_column :cities, :city, :string, null: false
