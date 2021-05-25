@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-# require "sinatra/activerecord"
-require 'json'
+require_relative 'requester'
 
 class StateName
   IBGE_LOCALIDADES_API_ESTADOS = 'https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome'
@@ -15,14 +14,15 @@ class StateName
   end
 
   def self.states
-    response = Faraday.get(IBGE_LOCALIDADES_API_ESTADOS)
-    return [] if response.status != 200
-
-    json_response = JSON.parse(response.body, symbolize_names: true)
-    states = []
-    json_response.each do |r|
-      states << new(uf: r[:sigla], name: r[:nome], location_id: r[:id])
+    response = StateName.request
+    response.map do |r|
+      new(uf: r[:sigla], name: r[:nome], location_id: r[:id])
     end
-    states
+  end
+
+  def self.request
+    api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/.."))
+    path = api['development']['base'] + api['development']['state']
+    Requester.request(path)
   end
 end

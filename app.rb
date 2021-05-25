@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'byebug'
+
 require_relative 'config/environment'
-# require 'cli'
 
 puts 'BEM VINDO!!!'
 puts
