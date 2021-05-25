@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# require 'spec_helper'
 require 'cli'
 require 'faraday'
 require 'name'
@@ -10,9 +9,6 @@ require 'stringio'
 require 'test_helper'
 
 describe Cli do
-  stub_const('IBGE_NAMES_API', 'https://servicodados.ibge.gov.br/api/v2/censos/nomes/ranking?localidade=')
-  stub_const('IGBE_NAMES_API_FREQUENCY', 'https://servicodados.ibge.gov.br/api/v2/censos/nomes/')
-
   context 'User input' do
     it '.user_input_uf' do
       io = StringIO.new
@@ -47,8 +43,12 @@ describe Cli do
       path = File.expand_path('support/get_names_frequency.json', File.dirname(__FILE__).to_s)
       json = File.read(path)
       response = double('faraday_response', body: json, status: 200)
-      api_path = "#{IGBE_NAMES_API_FREQUENCY}joao%7Cmaria"
-      allow(Faraday).to receive(:get).with(api_path).and_return(response)
+      api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/.."))
+
+      path_api = api['test']['base'] + api['test']['frequency']
+
+      api_path_frequency = "#{path_api}joao%7Cmaria"
+      allow(Faraday).to receive(:get).with(api_path_frequency).and_return(response)
 
       names = Cli.input_names
       expect(names.first[:nome]).to eq 'JOAO'
@@ -103,7 +103,12 @@ describe Cli do
         path = File.expand_path('support/get_names_frequency.json', File.dirname(__FILE__).to_s)
         json = File.read(path)
         response = double('faraday_response', body: json, status: 200)
-        allow(Faraday).to receive(:get).with('https://servicodados.ibge.gov.br/api/v2/censos/nomes/joao%7Cmaria').and_return(response)
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/.."))
+
+        path_api = api['test']['base'] + api['test']['frequency']
+        api_path_frequency = "#{path_api}joao%7Cmaria"
+
+        allow(Faraday).to receive(:get).with(api_path_frequency).and_return(response)
 
         names_joao_and_maria = JSON.parse(json, symbolize_names: true)
 
@@ -122,8 +127,12 @@ describe Cli do
         path = File.expand_path('support/get_names_by_uf.json', File.dirname(__FILE__).to_s)
         json = File.read(path)
         response = double('faraday_response', body: json, status: 200)
-        api_path = IBGE_NAMES_API + rj.location_id.to_s
-        allow(Faraday).to receive(:get).with(api_path).and_return(response)
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/.."))
+
+        path_api = api['test']['base'] + api['test']['rank']
+
+        api_path_rank = path_api + rj.location_id.to_s
+        allow(Faraday).to receive(:get).with(api_path_rank).and_return(response)
 
         expect { Cli.show_table(rj) }.to output(include('| RANK | NOME     | FREQUENCIA | % RELATIVA |',
                                                         '| 1    | MARIA    | 752021     | 4.356      |',
@@ -136,7 +145,11 @@ describe Cli do
         path_f = File.expand_path('support/get_names_by_uf_and_gender_F.json', File.dirname(__FILE__).to_s)
         json_f = File.read(path_f)
         response_f = double('faraday_response', body: json_f, status: 200)
-        api_path_f = IBGE_NAMES_API + "#{rj.location_id}&sexo=F"
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/.."))
+
+        path_api = api['test']['base'] + api['test']['rank']
+
+        api_path_f = path_api + "#{rj.location_id}&sexo=F"
         allow(Faraday).to receive(:get).with(api_path_f).and_return(response_f)
 
         expect do
@@ -152,7 +165,11 @@ describe Cli do
         path_m = File.expand_path('support/get_names_by_uf_and_gender_M.json', File.dirname(__FILE__).to_s)
         json_m = File.read(path_m)
         response_m = double('faraday_response', body: json_m, status: 200)
-        api_path_m = IBGE_NAMES_API + "#{rj.location_id}&sexo=M"
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/.."))
+
+        path_api = api['test']['base'] + api['test']['rank']
+
+        api_path_m = path_api + "#{rj.location_id}&sexo=M"
         allow(Faraday).to receive(:get).with(api_path_m).and_return(response_m)
 
         expect do
@@ -170,8 +187,12 @@ describe Cli do
         path = File.expand_path('support/get_names_by_city.json', File.dirname(__FILE__).to_s)
         json = File.read(path)
         response = double('faraday_response', body: json, status: 200)
-        api_path = IBGE_NAMES_API + city_rj.location_id.to_s
-        allow(Faraday).to receive(:get).with(api_path).and_return(response)
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/.."))
+
+        path_api = api['test']['base'] + api['test']['rank']
+
+        api_path_rank = path_api + city_rj.location_id.to_s
+        allow(Faraday).to receive(:get).with(api_path_rank).and_return(response)
 
         expect { Cli.show_table(city_rj) }.to output(
           include('| RANK | NOME      | FREQUENCIA | % RELATIVA |',
@@ -190,7 +211,11 @@ describe Cli do
         path_f = File.expand_path('support/get_names_by_city_and_gender_F.json', File.dirname(__FILE__).to_s)
         json_f = File.read(path_f)
         response_f = double('faraday_response', body: json_f, status: 200)
-        api_path_f = IBGE_NAMES_API + "#{city_rj.location_id}&sexo=F"
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/.."))
+
+        path_api = api['test']['base'] + api['test']['rank']
+
+        api_path_f = path_api + "#{city_rj.location_id}&sexo=F"
         allow(Faraday).to receive(:get).with(api_path_f).and_return(response_f)
 
         expect do
@@ -209,7 +234,11 @@ describe Cli do
         path_m = File.expand_path('support/get_names_by_city_and_gender_M.json', File.dirname(__FILE__).to_s)
         json_m = File.read(path_m)
         response_m = double('faraday_response', body: json_m, status: 200)
-        api_path_m = IBGE_NAMES_API + "#{city_rj.location_id}&sexo=M"
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/.."))
+
+        path_api = api['test']['base'] + api['test']['rank']
+
+        api_path_m = path_api + "#{city_rj.location_id}&sexo=M"
         allow(Faraday).to receive(:get).with(api_path_m).and_return(response_m)
 
         expect do
@@ -225,8 +254,12 @@ describe Cli do
       path = File.expand_path('support/get_names_frequency.json', File.dirname(__FILE__).to_s)
       json = File.read(path)
       response = double('faraday_response', body: json, status: 200)
-      api_path = "#{IGBE_NAMES_API_FREQUENCY}joao%7Cmaria"
-      allow(Faraday).to receive(:get).with(api_path).and_return(response)
+      api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/.."))
+
+      path_api = api['test']['base'] + api['test']['frequency']
+
+      api_path_frequency = "#{path_api}joao%7Cmaria"
+      allow(Faraday).to receive(:get).with(api_path_frequency).and_return(response)
 
       names = 'joao, maria'
       api_names = Name.names_frequency(names)

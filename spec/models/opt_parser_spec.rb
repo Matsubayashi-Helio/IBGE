@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require 'test_helper'
-require 'parser'
 require 'byebug'
+require 'faraday'
+require_relative '../../lib/state'
+require_relative '../../lib/name'
+require_relative '../../lib/opt_parser'
 
-describe OptParser do
-  stub_const('IBGE_NAMES_API', 'https://servicodados.ibge.gov.br/api/v2/censos/nomes/ranking?localidade=')
-  stub_const('IGBE_NAMES_API_FREQUENCY', 'https://servicodados.ibge.gov.br/api/v2/censos/nomes/')
-
+describe 'OptParser' do
   context '.parse' do
     context '--uf [UF]' do
       it 'should show table if [UF] is informed' do
@@ -15,9 +15,10 @@ describe OptParser do
         allow(Name).to receive(:rank_by_location).and_return([])
 
         option = '--uf=RJ'
-        expect { Parser.parse %W[#{option}] }.to output(include('|  NOMES MAIS COMUNS DE RIO DE JANEIRO  |',
-                                                                '| NOMES MAIS COMUNS DE RIO DE JANEIRO (FEMININO) |',
-                                                                '| NOMES MAIS COMUNS DE RIO DE JANEIRO (MASCULINO) |'))
+        expect { OptParser.parse %W[#{option}] }
+          .to output(include('|  NOMES MAIS COMUNS DE RIO DE JANEIRO  |',
+                             '| NOMES MAIS COMUNS DE RIO DE JANEIRO (FEMININO) |',
+                             '| NOMES MAIS COMUNS DE RIO DE JANEIRO (MASCULINO) |'))
           .to_stdout
       end
 
@@ -33,7 +34,7 @@ describe OptParser do
 
         option = '--uf'
         expect do
-          Parser.parse %W[#{option}]
+          OptParser.parse %W[#{option}]
         end.to output(include('UF | ESTADO', 'AC | Acre', 'TO | Tocantins')).to_stdout
         $stdin = STDIN
       end
@@ -47,7 +48,7 @@ describe OptParser do
         $stdin = io
         allow(Name).to receive(:rank_by_location).and_return([])
         option = '--uf=SP'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('UF inválida, digite novamente',
                   '|  NOMES MAIS COMUNS DE RIO DE JANEIRO  |',
                   '| NOMES MAIS COMUNS DE RIO DE JANEIRO (FEMININO) |',
@@ -64,7 +65,7 @@ describe OptParser do
 
         allow(Name).to receive(:rank_by_location).and_return([])
         option = '-u RJ'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('|  NOMES MAIS COMUNS DE RIO DE JANEIRO  |',
                   '| NOMES MAIS COMUNS DE RIO DE JANEIRO (FEMININO) |',
                   '| NOMES MAIS COMUNS DE RIO DE JANEIRO (MASCULINO) |')
@@ -83,7 +84,7 @@ describe OptParser do
         allow(Name).to receive(:rank_by_location).and_return([])
         option = '-u'
         expect do
-          Parser.parse %W[#{option}]
+          OptParser.parse %W[#{option}]
         end.to output(include('UF | ESTADO', 'AC | Acre', 'TO | Tocantins')).to_stdout
         $stdin = STDIN
       end
@@ -97,7 +98,7 @@ describe OptParser do
         $stdin = io
         allow(Name).to receive(:rank_by_location).and_return([])
         option = '-u AA'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('UF inválida, digite novamente',
                   '|  NOMES MAIS COMUNS DE RIO DE JANEIRO  |',
                   '| NOMES MAIS COMUNS DE RIO DE JANEIRO (FEMININO) |',
@@ -116,7 +117,7 @@ describe OptParser do
         allow(Name).to receive(:rank_by_location).and_return([])
 
         option = '--cidade=campinas'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('|     NOMES MAIS COMUNS DE CAMPINAS     |',
                   '| NOMES MAIS COMUNS DE CAMPINAS (FEMININO) |',
                   '| NOMES MAIS COMUNS DE CAMPINAS (MASCULINO) |')
@@ -131,7 +132,7 @@ describe OptParser do
         allow(Name).to receive(:rank_by_location).and_return([])
 
         option = '--cidade=são paulo'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('|    NOMES MAIS COMUNS DE SÃO PAULO     |',
                   '| NOMES MAIS COMUNS DE SÃO PAULO (FEMININO) |',
                   '| NOMES MAIS COMUNS DE SÃO PAULO (MASCULINO) |')
@@ -150,7 +151,7 @@ describe OptParser do
         allow(Name).to receive(:rank_by_location).and_return([])
 
         option = '--cidade=asfasdfas'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('Cidade não encontrada, vefirique acentuação.',
                   '|     NOMES MAIS COMUNS DE CAMPINAS     |',
                   '| NOMES MAIS COMUNS DE CAMPINAS (FEMININO) |',
@@ -169,7 +170,7 @@ describe OptParser do
         allow(Name).to receive(:rank_by_location).and_return([])
 
         option = '-c campinas'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('|     NOMES MAIS COMUNS DE CAMPINAS     |',
                   '| NOMES MAIS COMUNS DE CAMPINAS (FEMININO) |',
                   '| NOMES MAIS COMUNS DE CAMPINAS (MASCULINO) |')
@@ -184,7 +185,7 @@ describe OptParser do
         allow(Name).to receive(:rank_by_location).and_return([])
 
         option = '-c são paulo'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('|    NOMES MAIS COMUNS DE SÃO PAULO     |',
                   '| NOMES MAIS COMUNS DE SÃO PAULO (FEMININO) |',
                   '| NOMES MAIS COMUNS DE SÃO PAULO (MASCULINO) |')
@@ -202,7 +203,7 @@ describe OptParser do
         $stdin = io
         allow(Name).to receive(:rank_by_location).and_return([])
         option = '-c asfasdfas'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('Cidade não encontrada, vefirique acentuação.',
                   '|     NOMES MAIS COMUNS DE CAMPINAS     |',
                   '| NOMES MAIS COMUNS DE CAMPINAS (FEMININO) |',
@@ -217,7 +218,7 @@ describe OptParser do
       it '-d' do
         option = '-d'
         expect do
-          Parser.parse %W[#{option}]
+          OptParser.parse %W[#{option}]
         end.to output(include('Algumas dicas para a consulta de nomes ou localidades:',
                               '---> Nomes compostos não foram considerados.',
                               '---> Verifique se cidade/estado possui acentos')).to_stdout
@@ -226,7 +227,7 @@ describe OptParser do
       it '--dicas' do
         option = '--dicas'
         expect do
-          Parser.parse %W[#{option}]
+          OptParser.parse %W[#{option}]
         end.to output(include('Algumas dicas para a consulta de nomes ou localidades:',
                               '---> Nomes compostos não foram considerados.',
                               '---> Verifique se cidade/estado possui acentos')).to_stdout
@@ -236,7 +237,7 @@ describe OptParser do
     context 'show help menu' do
       it '-h' do
         option = '-h'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('-u, --uf [UF]                    Nomes mais comuns de UF em três tabelas.',
                   '-c, --cidade=CIDADE              Nomes mais comuns de CIDADE em três tabelas.',
                   '-f, --frequencia=NOMES           Frequência de NOMES ao longo das decadas',
@@ -246,7 +247,7 @@ describe OptParser do
 
       it '--help' do
         option = '--help'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('-u, --uf [UF]                    Nomes mais comuns de UF em três tabelas.',
                   '-c, --cidade=CIDADE              Nomes mais comuns de CIDADE em três tabelas.',
                   '-f, --frequencia=NOMES           Frequência de NOMES ao longo das decadas',
@@ -260,25 +261,34 @@ describe OptParser do
         path_frequency = File.expand_path('../support/get_names_frequency.json', File.dirname(__FILE__).to_s)
         json_frequency = File.read(path_frequency)
         response_frequency = double('faraday_response', body: json_frequency, status: 200)
-        api_path_frequency = "#{IGBE_NAMES_API_FREQUENCY}joao%7Cmaria"
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/../.."))
+
+        path_api = api['test']['base'] + api['test']['frequency']
+
+        api_path_frequency = "#{path_api}joao%7Cmaria"
         allow(Faraday).to receive(:get).with(api_path_frequency).and_return(response_frequency)
 
         option = '-f joao, maria'
-        expect { Parser.parse %W[#{option}] }.to output(include('| FREQUÊNCIA DE NOME POR DÉCADA ATÉ 2010 |',
-                                                                '| PERÍODO     | JOAO        | MARIA      |',
-                                                                '|   < 1930    |    60155    |   336477   |',
-                                                                '|    2000     |   794118    |  1111301   |')).to_stdout
+        expect { OptParser.parse %W[#{option}] }
+          .to output(include('| FREQUÊNCIA DE NOME POR DÉCADA ATÉ 2010 |',
+                             '| PERÍODO     | JOAO        | MARIA      |',
+                             '|   < 1930    |    60155    |   336477   |',
+                             '|    2000     |   794118    |  1111301   |')).to_stdout
       end
 
       it 'should show a message if could not find NAMES and ask to type again' do
         path_frequency = File.expand_path('../support/get_names_frequency.json', File.dirname(__FILE__).to_s)
         json_frequency = File.read(path_frequency)
         response_frequency = double('faraday_response', body: json_frequency, status: 200)
-        api_path_frequency = "#{IGBE_NAMES_API_FREQUENCY}joao%7Cmaria"
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/../.."))
+
+        path_api = api['test']['base'] + api['test']['frequency']
+
+        api_path_frequency = "#{path_api}joao%7Cmaria"
         allow(Faraday).to receive(:get).with(api_path_frequency).and_return(response_frequency)
 
         response_frequency_not_found = double('faraday_response', body: [], status: 400)
-        api_path_frequency_not_found = "#{IGBE_NAMES_API_FREQUENCY}nonamefound"
+        api_path_frequency_not_found = "#{path_api}nonamefound"
         allow(Faraday).to receive(:get).with(api_path_frequency_not_found).and_return(response_frequency_not_found)
 
         io = StringIO.new
@@ -287,7 +297,7 @@ describe OptParser do
         $stdin = io
 
         option = '-f nonamefound'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('Nome não contabilizado pelo IBGE, ou separador dos nomes está incorreto.',
                   '| FREQUÊNCIA DE NOME POR DÉCADA ATÉ 2010 |',
                   '| PERÍODO     | JOAO        | MARIA      |',
@@ -303,25 +313,34 @@ describe OptParser do
         path_frequency = File.expand_path('../support/get_names_frequency.json', File.dirname(__FILE__).to_s)
         json_frequency = File.read(path_frequency)
         response_frequency = double('faraday_response', body: json_frequency, status: 200)
-        api_path_frequency = "#{IGBE_NAMES_API_FREQUENCY}joao%7Cmaria"
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/../.."))
+
+        path_api = api['test']['base'] + api['test']['frequency']
+
+        api_path_frequency = "#{path_api}joao%7Cmaria"
         allow(Faraday).to receive(:get).with(api_path_frequency).and_return(response_frequency)
 
         option = '--frequencia=joao, maria'
-        expect { Parser.parse %W[#{option}] }.to output(include('| FREQUÊNCIA DE NOME POR DÉCADA ATÉ 2010 |',
-                                                                '| PERÍODO     | JOAO        | MARIA      |',
-                                                                '|   < 1930    |    60155    |   336477   |',
-                                                                '|    2000     |   794118    |  1111301   |')).to_stdout
+        expect { OptParser.parse %W[#{option}] }
+          .to output(include('| FREQUÊNCIA DE NOME POR DÉCADA ATÉ 2010 |',
+                             '| PERÍODO     | JOAO        | MARIA      |',
+                             '|   < 1930    |    60155    |   336477   |',
+                             '|    2000     |   794118    |  1111301   |')).to_stdout
       end
 
       it 'should show a message if could not find NAMES and ask to type again' do
         path_frequency = File.expand_path('../support/get_names_frequency.json', File.dirname(__FILE__).to_s)
         json_frequency = File.read(path_frequency)
         response_frequency = double('faraday_response', body: json_frequency, status: 200)
-        api_path_frequency = "#{IGBE_NAMES_API_FREQUENCY}joao%7Cmaria"
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/../.."))
+
+        path_api = api['test']['base'] + api['test']['frequency']
+
+        api_path_frequency = "#{path_api}joao%7Cmaria"
         allow(Faraday).to receive(:get).with(api_path_frequency).and_return(response_frequency)
 
         response_frequency_not_found = double('faraday_response', body: [], status: 400)
-        api_path_frequency_not_found = "#{IGBE_NAMES_API_FREQUENCY}nonamefound"
+        api_path_frequency_not_found = "#{path_api}nonamefound"
         allow(Faraday).to receive(:get).with(api_path_frequency_not_found).and_return(response_frequency_not_found)
 
         io = StringIO.new
@@ -330,7 +349,7 @@ describe OptParser do
         $stdin = io
 
         option = '--frequencia=nonamefound'
-        expect { Parser.parse %W[#{option}] }.to output(
+        expect { OptParser.parse %W[#{option}] }.to output(
           include('Nome não contabilizado pelo IBGE, ou separador dos nomes está incorreto.',
                   '| FREQUÊNCIA DE NOME POR DÉCADA ATÉ 2010 |',
                   '| PERÍODO     | JOAO        | MARIA      |',

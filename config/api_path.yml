@@ -1,0 +1,20 @@
+development:
+  base: 'https://servicodados.ibge.gov.br/api/'
+  city: 'v1/localidades/municipios?orderBy=nome'
+  state: 'v1/localidades/estados?orderBy=nome'
+  rank: 'v2/censos/nomes/ranking?localidade='
+  frequency: 'v2/censos/nomes/'
+
+test:
+  base: 'https://servicodados.ibge.gov.br/api/'
+  city: 'v1/localidades/municipios?orderBy=nome'
+  state: 'v1/localidades/estados?orderBy=nome'
+  rank: 'v2/censos/nomes/ranking?localidade='
+  frequency: 'v2/censos/nomes/'
+
+production:
+  base: 'https://servicodados.ibge.gov.br/api/'
+  city: 'v1/localidades/municipios?orderBy=nome'
+  state: 'v1/localidades/estados?orderBy=nome'
+  rank: 'v2/censos/nomes/ranking?localidade='
+  frequency: 'v2/censos/nomes/'

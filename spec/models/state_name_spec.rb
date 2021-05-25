@@ -6,15 +6,17 @@ require 'faraday'
 require 'byebug'
 
 describe StateName do
-  stub_const('IBGE_LOCATION_API', 'https://servicodados.ibge.gov.br/api/v1/localidades/estados?orderBy=nome')
-
   context 'Fetch API Data' do
     it 'should get all states' do
       path = File.expand_path('support/get_states.json', "#{File.dirname(__FILE__)}/..")
       json = File.read(path)
+      api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/../.."))
+
+      path_api = api['test']['base'] + api['test']['state']
+
       response = double('faraday_response', body: json, status: 200)
       allow(Faraday).to receive(:get)
-        .with(IBGE_LOCATION_API)
+        .with(path_api)
         .and_return(response)
 
       states = StateName.states
@@ -29,9 +31,13 @@ describe StateName do
     end
 
     it 'should return empty if cannot return data' do
+      api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/../.."))
+
+      path_api = api['test']['base'] + api['test']['state']
+
       response = double('faraday_response', body: '', status: 400)
       allow(Faraday).to receive(:get)
-        .with(IBGE_LOCATION_API)
+        .with(path_api)
         .and_return(response)
       states = StateName.states
 

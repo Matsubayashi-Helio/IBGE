@@ -6,9 +6,6 @@ require 'faraday'
 require 'state'
 
 describe Name do
-  stub_const('IBGE_NAMES_API', 'https://servicodados.ibge.gov.br/api/v2/censos/nomes/ranking?localidade=')
-  stub_const('IGBE_NAMES_API_FREQUENCY', 'https://servicodados.ibge.gov.br/api/v2/censos/nomes/')
-
   context 'Fetch API Data' do
     context 'ranking of location' do
       it 'should get names' do
@@ -17,8 +14,12 @@ describe Name do
         path = File.expand_path('support/get_names_by_uf.json', "#{File.dirname(__FILE__)}/..")
         json = File.read(path)
         response = double('faraday_response', body: json, status: 200)
-        api_path = IBGE_NAMES_API + rj.location_id.to_s
-        allow(Faraday).to receive(:get).with(api_path).and_return(response)
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/../.."))
+
+        path_api = api['test']['base'] + api['test']['rank']
+
+        api_path_rank = path_api + rj.location_id.to_s
+        allow(Faraday).to receive(:get).with(api_path_rank).and_return(response)
 
         names_location33 = Name.rank_by_location(rj.location_id)
 
@@ -34,8 +35,12 @@ describe Name do
         rj = create(:state, location_id: 33)
 
         response = double('faraday_response', body: '', status: 400)
-        api_path = IBGE_NAMES_API + rj.location_id.to_s
-        allow(Faraday).to receive(:get).with(api_path).and_return(response)
+        api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/../.."))
+
+        path_api = api['test']['base'] + api['test']['rank']
+
+        api_path_rank = path_api + rj.location_id.to_s
+        allow(Faraday).to receive(:get).with(api_path_rank).and_return(response)
 
         names_location33 = Name.rank_by_location(rj.location_id)
 
@@ -47,9 +52,13 @@ describe Name do
       path = File.expand_path('support/get_names_frequency.json', "#{File.dirname(__FILE__)}/..")
       json = File.read(path)
       response = double('faraday_response', body: json, status: 200)
-      api_path = "#{IGBE_NAMES_API_FREQUENCY}joao%7Cmaria"
+      api = YAML.load_file(File.expand_path('config/api_path.yml', "#{File.dirname(__FILE__)}/../.."))
 
-      allow(Faraday).to receive(:get).with(api_path).and_return(response)
+      path_api = api['test']['base'] + api['test']['frequency']
+
+      api_path_frequency = "#{path_api}joao%7Cmaria"
+
+      allow(Faraday).to receive(:get).with(api_path_frequency).and_return(response)
 
       names_frequency = Name.names_frequency('joao, maria')
 
